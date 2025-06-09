@@ -14,6 +14,10 @@ app.config.from_object(Config)
 
 mongo = PyMongo(app)
 
+@app.route('/')
+def home():
+    return "Welcome to the Flask MongoDB API!"
+
 # Check if the MongoDB connection is successful
 try:
     # The 'admin' command 'ping' is a simple way to check connection
