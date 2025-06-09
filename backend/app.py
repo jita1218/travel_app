@@ -2,13 +2,14 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from routes import create_app
-
 from flask import Flask
 from flask_pymongo import PyMongo
 from config import Config
+from flask_cors import CORS
 
+app = create_app()
+CORS(app, resources={r"/*": {"origins": "*"}})
 app = Flask(__name__)
-
 app.config.from_object(Config)
 
 mongo = PyMongo(app)
@@ -25,7 +26,6 @@ except Exception as e:
 from routes.auth_routes import auth_bp
 app.register_blueprint(auth_bp, url_prefix="/auth")
 
-app = create_app()
 
 if __name__ == "__main__":
     app.run(debug=True)
