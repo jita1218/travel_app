@@ -1,0 +1,21 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+.env
+
+# VS Code settings
+.vscode/
+
+# PyMongo/MongoEngine local files
+*.pkl
+*.db
+
+# OS files
+.DS_Store
+Thumbs.db
