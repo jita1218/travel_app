@@ -1,6 +1,6 @@
 from dotenv import load_dotenv
 load_dotenv()
-
+from routes import create_app
 from flask import Flask
 from flask_pymongo import PyMongo
 from config import Config
@@ -17,6 +17,8 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 
 mongo = PyMongo(app)
 
+app =create_app()
+
 @app.route('/')
 def home():
     return "Welcome to the Flask MongoDB API!"
@@ -27,14 +29,6 @@ try:
     print("MongoDB connection successful!")
 except Exception as e:
     print("MongoDB connection failed:", e)
-
-# Register authentication blueprint
-from routes.auth_routes import auth_bp
-app.register_blueprint(auth_bp, url_prefix="/auth")
-
-# Register destination blueprint
-from routes.destination_routes import destination_bp
-app.register_blueprint(destination_bp, url_prefix="/api/destination")
 
 # Run the Flask app
 if __name__ == "__main__":
