@@ -16,4 +16,13 @@ def create_app():
 
     from .destination_routes import destination_bp
     app.register_blueprint(destination_bp, url_prefix="/api/destination")
+    
+    from .blog_routes import blog_bp
+    app.register_blueprint(blog_bp, url_prefix="/api/blog")
+    
+    from .wishlist_routes import wishlist_bp
+    app.register_blueprint(wishlist_bp, url_prefix="/api/wishlist")
+    
+    from .booking_routes import booking_bp
+    app.register_blueprint(booking_bp, url_prefix="/api/booking")
     return app
