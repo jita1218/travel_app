@@ -11,6 +11,7 @@ import RegisterPage from "./pages/RegisterPage";
 import BlogPage from './pages/BlogPage';
 import AboutPage from "./pages/AboutPage";
 import BlogForm from './pages/BlogForm';
+import PackageForm from './pages/PackageForm';
 
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
             <Route path="/about" element={<FullPageWrapper><AboutPage /></FullPageWrapper>} />
             <Route path="/blog" element={<FullPageWrapper><BlogPage /></FullPageWrapper>} />
             <Route path="/blogform" element={<FullPageWrapper><BlogForm /></FullPageWrapper>} />
+            <Route path="/register-package" element={<FullPageWrapper><PackageForm /></FullPageWrapper>} />
             {/* Add more routes as needed */}
           </Routes>
         </div>

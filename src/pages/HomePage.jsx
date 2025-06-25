@@ -245,7 +245,8 @@ const HomePage = () => {
                             }}>
                                 <h3 style={{ margin: 0 }}>{pkg.name}</h3>
                                 <button
-                                    onClick={() => window.location.href = `/register?package=${encodeURIComponent(pkg.name)}`}
+                                    onClick={() => (window.location.href = `/register-package?package=${encodeURIComponent(pkg.name)}`)}
+
                                     style={{
                                         backgroundColor: '#154a4a',
                                         color: '#fff',
