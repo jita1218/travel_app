@@ -1,23 +1,20 @@
 from dotenv import load_dotenv
 load_dotenv()
-from routes import create_app
+
 from flask import Flask
 from flask_pymongo import PyMongo
 from config import Config
 from flask_cors import CORS
+from routes import create_app
 
-# Initialize Flask app
-app = Flask(__name__)
+# Initialize app using factory
+app = create_app()
 
-# Load configuration from Config class
-app.config.from_object(Config)
-
-# Enable CORS for all routes and origins
+# Enable CORS
 CORS(app, resources={r"/*": {"origins": "*"}})
 
+# Initialize Mongo (optional if not used in create_app)
 mongo = PyMongo(app)
-
-app =create_app()
 
 @app.route('/')
 def home():
@@ -30,6 +27,6 @@ try:
 except Exception as e:
     print("MongoDB connection failed:", e)
 
-# Run the Flask app
+# Run app
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=Config.PORT, debug=True)
