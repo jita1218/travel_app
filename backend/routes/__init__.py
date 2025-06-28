@@ -25,4 +25,8 @@ def create_app():
     
     from .booking_routes import booking_bp
     app.register_blueprint(booking_bp, url_prefix="/api/booking")
+    
+    from .package_routes import package_bp
+    app.register_blueprint(package_bp, url_prefix="/api/packages")
+
     return app

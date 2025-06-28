@@ -9,15 +9,18 @@ booking_bp = Blueprint("booking", __name__)
 
 @booking_bp.route("/create", methods=["POST"])
 def create_booking():
+    print("Creating a new booking")
     data = request.get_json()
     return create_booking_controller(data)
 
 @booking_bp.route("/my", methods=["GET"])
 def get_user_bookings():
+    print("Fetching user bookings")
     username = request.args.get("username")
     return get_user_bookings_controller(username)
 
 @booking_bp.route("/cancel", methods=["DELETE"])
 def cancel_booking():
+    print("Cancelling a booking")
     data = request.get_json()
     return cancel_booking_controller(data)
