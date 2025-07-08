@@ -4,10 +4,12 @@ from controller.booking_controller import (
     get_user_bookings_controller,
     cancel_booking_controller
 )
+from flask_cors import cross_origin
 
 booking_bp = Blueprint("booking", __name__)
 
-@booking_bp.route("/create", methods=["POST"])
+@booking_bp.route("/create", methods=["POST","OPTIONS"])
+@cross_origin()
 def create_booking():
     # Endpoint to create a new booking
     print("Creating a new booking")
