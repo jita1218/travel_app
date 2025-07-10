@@ -4,9 +4,9 @@ from datetime import datetime
 
 # Controller to create a new booking
 def create_booking_controller(data):
-    username = data.get("username")
-    destination = data.get("destination")
-    travel_date = data.get("travel_date")
+    username = data.get("username", "").strip()
+    destination = data.get("destination", "").strip()
+    travel_date = data.get("travel_date", "").strip()
     num_people = data.get("num_people")
 
     # Validate required fields
@@ -36,6 +36,7 @@ def create_booking_controller(data):
 
 # Controller to get all bookings for a user
 def get_user_bookings_controller(username):
+    username = username.strip() if username else ""
     # Validate username
     if not username:
         return jsonify({"error": "Username is required"}), 400
@@ -56,8 +57,8 @@ def get_user_bookings_controller(username):
 
 # Controller to cancel a booking
 def cancel_booking_controller(data):
-    username = data.get("username")
-    destination = data.get("destination")
+    username = data.get("username", "").strip()
+    destination = data.get("destination", "").strip()
 
     # Validate required fields
     if not username or not destination:

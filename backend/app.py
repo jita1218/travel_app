@@ -10,10 +10,10 @@ from routes import create_app
 # Initialize app using factory
 app = create_app()
 
-# Enable CORS
-CORS(app, supports_credentials=True, resources={r"/*": {"origins": "*"}})
+# Enable CORS (✅ FIXED)
+CORS(app, supports_credentials=True, resources={r"/*": {"origins": ["http://localhost:5173"]}})
 
-# Initialize Mongo (optional if not used in create_app)
+# Initialize Mongo (if not in create_app)
 mongo = PyMongo(app)
 
 @app.route('/')
