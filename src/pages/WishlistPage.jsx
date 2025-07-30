@@ -10,7 +10,7 @@ const WishlistPage = () => {
   useEffect(() => {
     if (!username) return;
 
-    axios.get(`${API_BASE}/wishlist/get`, {
+    axios.get(`${API_BASE}/api/wishlist/get`, {
       params: { username }
     })
       .then((res) => setItems(res.data))
@@ -19,7 +19,7 @@ const WishlistPage = () => {
 
   const handleRemove = async (destination) => {
     try {
-      await axios.delete(`${API_BASE}/wishlist/remove`, {
+      await axios.delete(`${API_BASE}/api/wishlist/remove`, {
         data: { username, destination }
       });
 
