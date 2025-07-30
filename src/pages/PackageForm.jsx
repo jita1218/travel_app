@@ -3,8 +3,7 @@ import { useLocation } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css'; // this still needed to get base calendar functionality
 
-const API_BASE = 'https://travel-app-rfuf.onrender.com/api';
-
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
 const PackageForm = () => {
     const location = useLocation();
     const params = new URLSearchParams(location.search);

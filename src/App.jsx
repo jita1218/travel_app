@@ -12,8 +12,8 @@ import BlogForm from './pages/BlogForm';
 import PackageForm from './pages/PackageForm';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
-import Logout from './pages/Logout';
-import WishlistPage from './pages/WishlistPage'; // ✅ New route added here
+import Logout from './pages/logout';
+import WishlistPage from './pages/WishlistPage';
 
 function App() {
   return (

@@ -12,7 +12,7 @@ import campImg from '../assets/camp2.jpg';
 import hotelImg from '../assets/4a.jpg';
 import LogoutModal from '../components/LogoutModal';
 
-const API_BASE = 'https://travel-app-rfuf.onrender.com/api';
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 const HomePage = () => {
   const location = useLocation();
