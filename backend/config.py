@@ -5,4 +5,5 @@ class Config:
     SECRET_KEY = os.getenv("SECRET_KEY")
     PORT = int(os.getenv("PORT"))
     OPENTRIPMAP_API_KEY = os.getenv("OPENTRIPMAP_API_KEY")
+    ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "").split(",")
 

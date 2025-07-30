@@ -11,7 +11,9 @@ from routes import create_app
 app = create_app()
 
 # Enable CORS (✅ FIXED)
-CORS(app, supports_credentials=True, resources={r"/*": {"origins": ["http://localhost:5173"]}})
+CORS(app, supports_credentials=True, resources={
+    r"/*": {"origins": Config.ALLOWED_ORIGINS}
+})
 
 # Initialize Mongo (if not in create_app)
 mongo = PyMongo(app)
