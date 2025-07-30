@@ -23,7 +23,6 @@ const WishlistPage = () => {
         data: { username, destination }
       });
 
-      // Update the UI
       setItems((prevItems) =>
         prevItems.filter((item) => item.destination !== destination)
       );
