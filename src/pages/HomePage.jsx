@@ -36,7 +36,7 @@ const HomePage = () => {
       if (!username) return;
 
       try {
-        const response = await axios.get(`https://travel-app-rfuf.onrender.com/api/wishlist/get`, {
+        const response = await axios.get(`${API_BASE}/api/wishlist/get`, {
           params: { username }
         });
 
@@ -80,7 +80,7 @@ const HomePage = () => {
 
     try {
       if (alreadyLiked) {
-        await axios.delete(`${API_BASE}/wishlist/remove`, { data: payload });
+        await axios.delete(`${API_BASE}/api/wishlist/remove`, { data: payload });
         setLikedState((prev) => prev.filter((n) => n !== item.name));
       } else {
         await axios.post(`${API_BASE}/wishlist/add`, payload);
