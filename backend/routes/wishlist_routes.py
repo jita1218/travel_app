@@ -7,7 +7,7 @@ from controller.wishlist_controller import (
 
 wishlist_bp = Blueprint("wishlist", __name__)
 
-@wishlist_bp.route("/add", methods=["POST", "OPTIONS"])
+@wishlist_bp.route("/add", methods=["POST"])
 def add_wishlist():
     # Endpoint to add a destination to the wishlist
     print("Adding destination to wishlist")
@@ -21,7 +21,7 @@ def get_wishlist():
     username = request.args.get("username")  # Get username from query parameters
     return get_wishlist_controller(username)  # Call controller to handle logic
 
-@wishlist_bp.route("/remove", methods=["DELETE", "OPTIONS"])
+@wishlist_bp.route("/remove", methods=["DELETE"])
 def remove_wishlist():
     # Endpoint to remove a destination from the wishlist
     print("Removing destination from wishlist")
