@@ -12,7 +12,7 @@ app = create_app()
 
 # Enable CORS (✅ FIXED)
 CORS(app, supports_credentials=True, resources={
-    r"/*": {"origins": Config.ALLOWED_ORIGINS}
+    r"/*": {"origins": ["https://dairytravel.netlify.app"]}
 })
 
 # Initialize Mongo (if not in create_app)
