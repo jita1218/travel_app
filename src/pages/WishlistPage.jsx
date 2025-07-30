@@ -19,7 +19,7 @@ const WishlistPage = () => {
 
   const handleRemove = async (destination) => {
     try {
-      await axios.delete(`${API_BASE}/wishlist/remove`, {
+      await axios.delete(`${API_BASE}/api/wishlist/remove`, {
         data: { username, destination }
       });
 
