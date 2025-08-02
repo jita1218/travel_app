@@ -20,12 +20,20 @@ const MyBookingsPage = () => {
   const handleCancel = async (bookingId) => {
     try {
       await axios.delete(`${API_BASE}/api/bookings/${bookingId}`);
-
       setBookings((prev) => prev.filter((b) => b._id !== bookingId));
     } catch (err) {
       console.error('Failed to cancel booking:', err);
       alert('Failed to cancel booking. Please try again.');
     }
+  };
+
+  // Helper to render values nicely
+  const renderValue = (key, value) => {
+    if (key.toLowerCase().includes('date') && value) {
+      const date = new Date(value);
+      return isNaN(date) ? value : date.toLocaleDateString();
+    }
+    return value?.toString() || 'N/A';
   };
 
   return (
@@ -45,9 +53,11 @@ const MyBookingsPage = () => {
                 borderRadius: '8px',
               }}
             >
-              <h3>{booking.packageName}</h3>
-              <p><strong>Travel Date:</strong> {new Date(booking.travelDate).toLocaleDateString()}</p>
-              <p><strong>Price:</strong> ₹{booking.totalPrice}</p>
+              {Object.entries(booking).map(([key, value]) => (
+                <p key={key}>
+                  <strong>{key.replace(/_/g, ' ')}:</strong> {renderValue(key, value)}
+                </p>
+              ))}
               <button
                 onClick={() => handleCancel(booking._id)}
                 style={{
