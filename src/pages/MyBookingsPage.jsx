@@ -17,12 +17,17 @@ const MyBookingsPage = () => {
       .catch((err) => console.error('Failed to fetch bookings:', err));
   }, [username]);
 
-  const handleCancel = async (bookingId) => {
+  const handleCancel = async (destination) => {
     try {
-      await axios.delete(`${API_BASE}/api/bookings/${bookingId}`);
-      setBookings((prev) => prev.filter((b) => b._id !== bookingId));
+      await axios.post(`${API_BASE}/api/bookings/cancel`, {
+        username,
+        destination,
+      });
+
+      // Remove the cancelled booking from state
+      setBookings((prev) => prev.filter((b) => b.destination !== destination));
     } catch (err) {
-      console.error('Failed to cancel booking:', err);
+      console.error('Failed to cancel booking:', err.response?.data || err.message);
       alert('Failed to cancel booking. Please try again.');
     }
   };
@@ -73,7 +78,7 @@ const MyBookingsPage = () => {
               }}
             >
               {Object.entries(booking).map(([key, value]) => {
-                if (['_id', '__v'].includes(key)) return null; // skip internal fields
+                if (['_id', '__v'].includes(key)) return null;
                 return (
                   <p key={key}>
                     <strong>{formatLabel(key)}:</strong> {renderValue(key, value)}
@@ -81,7 +86,7 @@ const MyBookingsPage = () => {
                 );
               })}
               <button
-                onClick={() => handleCancel(booking._id)}
+                onClick={() => handleCancel(booking.destination)}
                 style={{
                   backgroundColor: '#dc3545',
                   color: 'white',
