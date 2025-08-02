@@ -111,6 +111,7 @@ const HomePage = () => {
       }
     }
   }, [location]);
+console.log("Token:", token);
 
   return (
     <div style={{ width: '100%', fontFamily: "'Poppins', sans-serif" }}>
