@@ -177,7 +177,7 @@ const HomePage = () => {
                 <h3 style={{ margin: 0, fontSize: '1.3rem', fontWeight: 700 }}>{loc.name}</h3>
                 <p style={{ margin: 0 }}>{loc.state}</p>
               </div>
-              <button onClick={() => window.location.href = `/register?place=${encodeURIComponent(loc.name)}`} style={{ position: 'absolute', top: '1rem', left: '1rem', backgroundColor: '#154a4a', color: '#fff', border: 'none', padding: '0.4rem 1rem', borderRadius: '8px', fontWeight: 600, cursor: 'pointer', zIndex: 2 }}>Register</button>
+              <button onClick={() => navigate(`/register?place=${encodeURIComponent(loc.name)}`) } style={{ position: 'absolute', top: '1rem', left: '1rem', backgroundColor: '#154a4a', color: '#fff', border: 'none', padding: '0.4rem 1rem', borderRadius: '8px', fontWeight: 600, cursor: 'pointer', zIndex: 2 }}>Register</button>
               {token && (
                 <button
                   onClick={() => handleToggleWishlist(loc, 'location')}
@@ -207,7 +207,7 @@ const HomePage = () => {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1rem' }}>
                 <h3>{pkg.name}</h3>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <button onClick={() => window.location.href = `/register-package?package=${encodeURIComponent(pkg.name)}`} style={{ backgroundColor: '#154a4a', color: '#fff', padding: '0.4rem 1rem', borderRadius: '6px', border: 'none', cursor: 'pointer', fontWeight: 600, opacity: 0.9 }}>Register</button>
+                  <button onClick={() => navigate(`/register-package?package=${encodeURIComponent(pkg.name)}`)} style={{ backgroundColor: '#154a4a', color: '#fff', padding: '0.4rem 1rem', borderRadius: '6px', border: 'none', cursor: 'pointer', fontWeight: 600, opacity: 0.9 }}>Register</button>
                   {token && (
                     <button onClick={() => handleToggleWishlist(pkg, 'package')} style={{ background: 'none', border: 'none', cursor: 'pointer', marginLeft: '8px' }} title="Toggle wishlist">
                       {likedPackages.includes(pkg.name) ? <FaHeart color="red" size={20} /> : <FaRegHeart color="#555" size={20} />}
