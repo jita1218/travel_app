@@ -24,16 +24,15 @@ const MyBookingsPage = () => {
   }, [username]);
 
   const handleCancel = async (booking) => {
-    const payload = {
-      username,
-      destination: booking.destination,
-    };
-
-    console.log('Attempting to cancel booking with:', payload);
+    console.log('Attempting to cancel booking with:', booking);
+    console.log("API_BASE is:", API_BASE);
 
     try {
       const res = await axios.delete(`${API_BASE}/api/booking/cancel`, {
-        data: payload,
+        params: {
+          username,
+          destination: booking.destination,
+        },
       });
 
       console.log('Cancellation response:', res.data);
