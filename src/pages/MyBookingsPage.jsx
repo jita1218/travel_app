@@ -27,11 +27,25 @@ const MyBookingsPage = () => {
     }
   };
 
-  // Helper to render values nicely
+  const formatLabel = (key) => {
+    switch (key) {
+      case 'created_at':
+        return 'Booked On';
+      case 'travel_date':
+        return 'Travel Date';
+      case 'destination':
+        return 'Destination';
+      case 'num_people':
+        return 'Number of People';
+      default:
+        return key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    }
+  };
+
   const renderValue = (key, value) => {
-    if (key.toLowerCase().includes('date') && value) {
+    if ((key.includes('date') || key === 'created_at') && value) {
       const date = new Date(value);
-      return isNaN(date) ? value : date.toLocaleDateString();
+      return isNaN(date) ? value : date.toLocaleString(); // includes time
     }
     return value?.toString() || 'N/A';
   };
@@ -55,7 +69,7 @@ const MyBookingsPage = () => {
             >
               {Object.entries(booking).map(([key, value]) => (
                 <p key={key}>
-                  <strong>{key.replace(/_/g, ' ')}:</strong> {renderValue(key, value)}
+                  <strong>{formatLabel(key)}:</strong> {renderValue(key, value)}
                 </p>
               ))}
               <button
