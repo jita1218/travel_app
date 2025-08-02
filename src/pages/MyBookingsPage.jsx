@@ -30,6 +30,7 @@ const MyBookingsPage = () => {
     };
 
     console.log('Attempting to cancel booking with:', payload);
+    console.log("API_BASE is:", API_BASE);
 
     try {
       const res = await axios.post(`${API_BASE}/api/booking/cancel`, payload);
