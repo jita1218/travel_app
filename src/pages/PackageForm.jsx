@@ -44,7 +44,7 @@ const PackageForm = () => {
 
         setLoading(true);
         try {
-            const response = await fetch(`${API_BASE}/booking/create`, {
+            const response = await fetch(`${API_BASE}/api/booking/create`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
