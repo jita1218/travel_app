@@ -5,7 +5,6 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 
 import HomePage from "./pages/HomePage";
-import RegisterPage from "./pages/RegisterPage";
 import BlogPage from './pages/BlogPage';
 import AboutPage from "./pages/AboutPage";
 import BlogForm from './pages/BlogForm';
@@ -23,7 +22,6 @@ function App() {
         <div style={{ flex: 1, width: "100%", display: "flex", flexDirection: "column" }}>
           <Routes>
             <Route path="/" element={<FullPageWrapper><HomePage /></FullPageWrapper>} />
-            <Route path="/register" element={<FullPageWrapper><RegisterPage /></FullPageWrapper>} />
             <Route path="/about" element={<FullPageWrapper><AboutPage /></FullPageWrapper>} />
             <Route path="/blog" element={<FullPageWrapper><BlogPage /></FullPageWrapper>} />
             <Route path="/blogform" element={<FullPageWrapper><BlogForm /></FullPageWrapper>} />

@@ -177,7 +177,7 @@ const HomePage = () => {
                 <h3 style={{ margin: 0, fontSize: '1.3rem', fontWeight: 700 }}>{loc.name}</h3>
                 <p style={{ margin: 0 }}>{loc.state}</p>
               </div>
-              <button onClick={() => navigate(`/register?place=${encodeURIComponent(loc.name)}`) } style={{ position: 'absolute', top: '1rem', left: '1rem', backgroundColor: '#154a4a', color: '#fff', border: 'none', padding: '0.4rem 1rem', borderRadius: '8px', fontWeight: 600, cursor: 'pointer', zIndex: 2 }}>Register</button>
+              <button onClick={() => navigate(`/register-package?package=${encodeURIComponent(loc.name)}`) } style={{ position: 'absolute', top: '1rem', left: '1rem', backgroundColor: '#154a4a', color: '#fff', border: 'none', padding: '0.4rem 1rem', borderRadius: '8px', fontWeight: 600, cursor: 'pointer', zIndex: 2 }}>Register</button>
               {token && (
                 <button
                   onClick={() => handleToggleWishlist(loc, 'location')}
