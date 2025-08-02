@@ -10,29 +10,38 @@ const MyBookingsPage = () => {
   useEffect(() => {
     if (!username) return;
 
-    axios.get(`${API_BASE}/api/booking/my`, {
-      params: { username }
-    })
+    axios
+      .get(`${API_BASE}/api/booking/my`, {
+        params: { username },
+      })
       .then((res) => setBookings(res.data))
       .catch((err) => console.error('Failed to fetch bookings:', err));
   }, [username]);
 
-  const handleCancel = async (destination) => {
+  const handleCancel = async (booking) => {
+    console.log("Attempting to cancel booking with:", {
+      username: booking.username,
+      destination: booking.destination,
+    });
+
     try {
       await axios.post(`${API_BASE}/api/bookings/cancel`, {
-        username,
-        destination,
+        username: booking.username,
+        destination: booking.destination,
       });
 
-      // Remove the cancelled booking from state
-      setBookings((prev) => prev.filter((b) => b.destination !== destination));
+      setBookings((prev) =>
+        prev.filter(
+          (b) =>
+            !(b.username === booking.username && b.destination === booking.destination)
+        )
+      );
     } catch (err) {
       console.error('Failed to cancel booking:', err.response?.data || err.message);
       alert('Failed to cancel booking. Please try again.');
     }
   };
 
-  // Custom label formatter
   const formatLabel = (key) => {
     switch (key) {
       case 'destination':
@@ -44,18 +53,19 @@ const MyBookingsPage = () => {
       case 'created_at':
         return 'Booked On';
       default:
-        return key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+        return key.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
     }
   };
 
-  // Custom value formatter
   const renderValue = (key, value) => {
     if ((key.includes('date') || key === 'created_at') && value) {
       const date = new Date(value);
-      return isNaN(date) ? value : date.toLocaleString(undefined, {
-        dateStyle: 'medium',
-        timeStyle: 'short',
-      });
+      return isNaN(date)
+        ? value
+        : date.toLocaleString(undefined, {
+            dateStyle: 'medium',
+            timeStyle: 'short',
+          });
     }
     return value?.toString() || 'N/A';
   };
@@ -69,7 +79,7 @@ const MyBookingsPage = () => {
         <ul style={{ listStyle: 'none', padding: 0 }}>
           {bookings.map((booking) => (
             <li
-              key={booking._id}
+              key={`${booking.username}-${booking.destination}-${booking.travel_date}`}
               style={{
                 marginBottom: '2rem',
                 border: '1px solid #ccc',
@@ -86,7 +96,7 @@ const MyBookingsPage = () => {
                 );
               })}
               <button
-                onClick={() => handleCancel(booking.destination)}
+                onClick={() => handleCancel(booking)}
                 style={{
                   backgroundColor: '#dc3545',
                   color: 'white',
