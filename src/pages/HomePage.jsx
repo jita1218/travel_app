@@ -19,6 +19,7 @@ const HomePage = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
   const username = localStorage.getItem('username');
+  const isLoggedIn = !!localStorage.getItem('token');
 
   const [likedLocations, setLikedLocations] = useState([]);
   const [likedPackages, setLikedPackages] = useState([]);
@@ -158,9 +159,11 @@ const HomePage = () => {
           ) : (
             <>
               <Link to="/wishlist" style={{ ...authBtnStyle, backgroundColor: '#0d6efd' }}>Wishlist</Link>
+              <Link to="/my-bookings" style={{ ...authBtnStyle, backgroundColor: '#6f42c1' }}>My Bookings</Link>
               <button onClick={handleLogout} style={{ ...authBtnStyle, backgroundColor: '#dc3545' }}>Logout</button>
             </>
           )}
+
         </div>
       </section>
 
@@ -177,7 +180,7 @@ const HomePage = () => {
                 <h3 style={{ margin: 0, fontSize: '1.3rem', fontWeight: 700 }}>{loc.name}</h3>
                 <p style={{ margin: 0 }}>{loc.state}</p>
               </div>
-              <button onClick={() => navigate(`/register-package?package=${encodeURIComponent(loc.name)}`) } style={{ position: 'absolute', top: '1rem', left: '1rem', backgroundColor: '#154a4a', color: '#fff', border: 'none', padding: '0.4rem 1rem', borderRadius: '8px', fontWeight: 600, cursor: 'pointer', zIndex: 2 }}>Register</button>
+              <button onClick={() => navigate(`/register-package?package=${encodeURIComponent(loc.name)}`)} style={{ position: 'absolute', top: '1rem', left: '1rem', backgroundColor: '#154a4a', color: '#fff', border: 'none', padding: '0.4rem 1rem', borderRadius: '8px', fontWeight: 600, cursor: 'pointer', zIndex: 2 }}>Register</button>
               {token && (
                 <button
                   onClick={() => handleToggleWishlist(loc, 'location')}

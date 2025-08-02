@@ -13,6 +13,7 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Logout from './pages/logout';
 import WishlistPage from './pages/WishlistPage';
+import MyBookingsPage from './pages/MyBookingsPage'; 
 
 function App() {
   return (
@@ -29,7 +30,8 @@ function App() {
             <Route path="/login" element={<FullPageWrapper><Login /></FullPageWrapper>} />
             <Route path="/signup" element={<FullPageWrapper><Signup /></FullPageWrapper>} />
             <Route path="/logout" element={<FullPageWrapper><Logout /></FullPageWrapper>} />
-            <Route path="/wishlist" element={<FullPageWrapper><WishlistPage /></FullPageWrapper>} /> {/* ✅ NEW */}
+            <Route path="/wishlist" element={<FullPageWrapper><WishlistPage /></FullPageWrapper>} />
+            <Route path="/my-bookings" element={<FullPageWrapper><MyBookingsPage /></FullPageWrapper>} /> {/* ✅ NEW */}
           </Routes>
         </div>
         <Footer />
