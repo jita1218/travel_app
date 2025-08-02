@@ -14,27 +14,29 @@ const MyBookingsPage = () => {
       .get(`${API_BASE}/api/booking/my`, {
         params: { username },
       })
-      .then((res) => setBookings(res.data))
-      .catch((err) => console.error('Failed to fetch bookings:', err));
+      .then((res) => {
+        console.log("Fetched bookings:", res.data);
+        setBookings(res.data);
+      })
+      .catch((err) =>
+        console.error('Failed to fetch bookings:', err.response?.data || err.message)
+      );
   }, [username]);
 
   const handleCancel = async (booking) => {
-    console.log("Attempting to cancel booking with:", {
-      username: booking.username,
+    const payload = {
+      username,
       destination: booking.destination,
-    });
+    };
+
+    console.log('Attempting to cancel booking with:', payload);
 
     try {
-      await axios.post(`${API_BASE}/api/bookings/cancel`, {
-        username: booking.username,
-        destination: booking.destination,
-      });
+      const res = await axios.post(`${API_BASE}/api/bookings/cancel`, payload);
+      console.log('Cancellation response:', res.data);
 
       setBookings((prev) =>
-        prev.filter(
-          (b) =>
-            !(b.username === booking.username && b.destination === booking.destination)
-        )
+        prev.filter((b) => b.destination !== booking.destination)
       );
     } catch (err) {
       console.error('Failed to cancel booking:', err.response?.data || err.message);
@@ -79,7 +81,7 @@ const MyBookingsPage = () => {
         <ul style={{ listStyle: 'none', padding: 0 }}>
           {bookings.map((booking) => (
             <li
-              key={`${booking.username}-${booking.destination}-${booking.travel_date}`}
+              key={booking._id}
               style={{
                 marginBottom: '2rem',
                 border: '1px solid #ccc',
