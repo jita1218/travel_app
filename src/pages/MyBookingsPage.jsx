@@ -10,7 +10,9 @@ const MyBookingsPage = () => {
   useEffect(() => {
     if (!username) return;
 
-    axios.get(`${API_BASE}/api/bookings/${username}`)
+    axios.get(`${API_BASE}/api/booking/my`, {
+      params: { username }
+    })
       .then((res) => setBookings(res.data))
       .catch((err) => console.error('Failed to fetch bookings:', err));
   }, [username]);
@@ -18,6 +20,7 @@ const MyBookingsPage = () => {
   const handleCancel = async (bookingId) => {
     try {
       await axios.delete(`${API_BASE}/api/bookings/${bookingId}`);
+
       setBookings((prev) => prev.filter((b) => b._id !== bookingId));
     } catch (err) {
       console.error('Failed to cancel booking:', err);
