@@ -1,37 +1,21 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { FaHeart, FaRegHeart } from 'react-icons/fa';
 
+// Asset and data imports (assuming they are in the correct paths)
 import heroVideo from '../assets/hero.mp4';
 import locations from '../data/locations';
 import packages from '../data/packages';
-import travelImg from '../assets/3a.jpg';
-import foodImg from '../assets/2a.jpg';
-import campImg from '../assets/camp2.jpg';
-import hotelImg from '../assets/4a.jpg';
-import LogoutModal from '../components/LogoutModal';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
-const HomePage = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const token = localStorage.getItem('token');
-  const username = localStorage.getItem('username');
-  const isLoggedIn = !!localStorage.getItem('token');
-
+// --- Custom Hook: useWishlist ---
+// Encapsulates all wishlist logic for reusability and separation of concerns.
+const useWishlist = (username) => {
   const [likedLocations, setLikedLocations] = useState([]);
   const [likedPackages, setLikedPackages] = useState([]);
 
-  const handleLogout = () => {
-    const confirmed = window.confirm('Are you sure you want to logout?');
-    if (confirmed) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('username');
-      navigate('/');
-    }
-  };
   useEffect(() => {
     const fetchWishlist = async () => {
       if (!username) return;
@@ -42,10 +26,11 @@ const HomePage = () => {
         });
 
         const data = response.data || [];
-
         const locationNames = [];
         const packageNames = [];
-
+        
+        // SUGGESTION: The API should return the item type ('location' or 'package').
+        // This check against a local array is brittle.
         data.forEach((item) => {
           const name = item.destination;
           const isLocation = locations.some((loc) => loc.name === name);
@@ -66,176 +51,209 @@ const HomePage = () => {
     fetchWishlist();
   }, [username]);
 
-  const handleToggleWishlist = async (item, type) => {
+  const handleToggleWishlist = useCallback(async (item, type) => {
     if (!username) return;
 
     const isLocation = type === 'location';
     const likedState = isLocation ? likedLocations : likedPackages;
     const setLikedState = isLocation ? setLikedLocations : setLikedPackages;
     const alreadyLiked = likedState.includes(item.name);
+    
+    // Store original state to revert on error
+    const originalState = [...likedState];
 
-    const payload = {
-      username,
-      destination: item.name,
-    };
+    // Optimistic UI update
+    if (alreadyLiked) {
+      setLikedState((prev) => prev.filter((n) => n !== item.name));
+    } else {
+      setLikedState((prev) => [...prev, item.name]);
+    }
 
     try {
       if (alreadyLiked) {
-        await axios.delete(`${API_BASE}/api/wishlist/remove`, { data: payload });
-        setLikedState((prev) => prev.filter((n) => n !== item.name));
+        await axios.delete(`${API_BASE}/api/wishlist/remove`, { data: { username, destination: item.name } });
       } else {
-        await axios.post(`${API_BASE}/api/wishlist/add`, payload);
-        setLikedState((prev) => [...prev, item.name]);
+        await axios.post(`${API_BASE}/api/wishlist/add`, { username, destination: item.name });
       }
     } catch (err) {
-      if (err.response?.status === 409) {
-        console.warn('Already in wishlist');
-        setLikedState((prev) => [...prev, item.name]);
-      } else {
-        console.error('Wishlist toggle failed:', err);
-        alert('Failed to update wishlist.');
-      }
+      console.error('Wishlist toggle failed:', err);
+      alert('Failed to update wishlist. Please try again.');
+      // --- FIX: Revert state on API error ---
+      setLikedState(originalState);
     }
+  }, [username, likedLocations, likedPackages]);
 
-  };
+  return { likedLocations, likedPackages, handleToggleWishlist };
+};
 
+
+// --- Component: LogoutModal ---
+const LogoutModal = ({ isOpen, onClose, onConfirm }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div style={modalOverlayStyle}>
+      <div style={modalContentStyle}>
+        <h4>Confirm Logout</h4>
+        <p>Are you sure you want to logout?</p>
+        <div style={modalActionsStyle}>
+          <button onClick={onClose} style={{ ...modalButtonStyle, backgroundColor: '#6c757d' }}>Cancel</button>
+          <button onClick={onConfirm} style={{ ...modalButtonStyle, backgroundColor: '#dc3545' }}>Logout</button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+
+// --- Component: AuthButtons ---
+const AuthButtons = ({ isLoggedIn, onLogoutClick }) => {
+  return (
+    <div style={{ position: 'absolute', top: '1.5rem', right: '2rem', zIndex: 10, display: 'flex', gap: '1rem' }}>
+      {!isLoggedIn ? (
+        <>
+          <Link to="/login" style={{ ...authBtnStyle, backgroundColor: '#154a4a' }}>Login</Link>
+          <Link to="/signup" style={{ ...authBtnStyle, backgroundColor: '#198754' }}>Signup</Link>
+        </>
+      ) : (
+        <>
+          <Link to="/wishlist" style={{ ...authBtnStyle, backgroundColor: '#0d6efd' }}>Wishlist</Link>
+          <Link to="/my-bookings" style={{ ...authBtnStyle, backgroundColor: '#6f42c1' }}>My Bookings</Link>
+          <button onClick={onLogoutClick} style={{ ...authBtnStyle, backgroundColor: '#dc3545' }}>Logout</button>
+        </>
+      )}
+    </div>
+  );
+};
+
+
+// --- Component: LocationCard ---
+const LocationCard = ({ loc, isLiked, onToggle, isLoggedIn }) => {
+  const navigate = useNavigate();
+  return (
+    <div style={locationCardStyle}>
+      <img src={loc.image} alt={loc.name} style={locationImgStyle} />
+      <div style={locationOverlayStyle} />
+      <div style={locationContentStyle}>
+        <h3 style={{ margin: 0, fontSize: '1.3rem', fontWeight: 700 }}>{loc.name}</h3>
+        <p style={{ margin: 0 }}>{loc.state}</p>
+      </div>
+      <button onClick={() => navigate(`/register-package?package=${encodeURIComponent(loc.name)}`)} style={registerBtnStyle}>Register</button>
+      {isLoggedIn && (
+        <button onClick={() => onToggle(loc, 'location')} style={wishlistBtnStyle} title="Toggle wishlist">
+          {isLiked ? <FaHeart color="red" size={20} /> : <FaRegHeart color="white" size={20} />}
+        </button>
+      )}
+    </div>
+  );
+};
+
+
+// --- Component: PackageCard ---
+const PackageCard = ({ pkg, isLiked, onToggle, isLoggedIn }) => {
+  const navigate = useNavigate();
+  return (
+    <div style={packageCardStyle}>
+      <img src={pkg.image} alt={pkg.name} style={packageImgStyle} />
+      <div style={{ padding: '1.5rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1rem' }}>
+          <h3>{pkg.name}</h3>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <button onClick={() => navigate(`/register-package?package=${encodeURIComponent(pkg.name)}`)} style={pkgRegisterBtnStyle}>Register</button>
+            {isLoggedIn && (
+              <button onClick={() => onToggle(pkg, 'package')} style={pkgWishlistBtnStyle} title="Toggle wishlist">
+                {isLiked ? <FaHeart color="red" size={20} /> : <FaRegHeart color="#555" size={20} />}
+              </button>
+            )}
+          </div>
+        </div>
+        <ul style={{ marginTop: '0.5rem', paddingLeft: '1rem', textAlign: 'left' }}>
+          {pkg.features.map((feature, i) => (
+            <li key={i} style={{ color: '#555', marginBottom: '0.25rem' }}>{feature}</li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+};
+
+
+// --- Main Component: HomePage ---
+const HomePage = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  
+  const token = localStorage.getItem('token');
+  const username = localStorage.getItem('username');
+  const isLoggedIn = !!token;
+  
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  const { likedLocations, likedPackages, handleToggleWishlist } = useWishlist(username);
+
+  // Scroll to section based on URL parameter
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const scrollTarget = params.get('scroll');
     if (scrollTarget) {
       const el = document.getElementById(scrollTarget);
       if (el) {
-        setTimeout(() => {
-          el.scrollIntoView({ behavior: 'smooth' });
-        }, 100);
+        setTimeout(() => el.scrollIntoView({ behavior: 'smooth' }), 100);
       }
     }
   }, [location]);
-console.log("Token:", token);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('username');
+    setIsLogoutModalOpen(false);
+    navigate('/');
+  };
 
   return (
     <div style={{ width: '100%', fontFamily: "'Poppins', sans-serif" }}>
-      <section
-        style={{ position: 'relative', width: '100%', height: '100vh', overflow: 'hidden' }}
-      >
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0 }}
-        >
+      <LogoutModal
+        isOpen={isLogoutModalOpen}
+        onClose={() => setIsLogoutModalOpen(false)}
+        onConfirm={handleLogout}
+      />
+      
+      <section style={heroSectionStyle}>
+        <video autoPlay muted loop playsInline style={heroVideoStyle}>
           <source src={heroVideo} type="video/mp4" />
         </video>
-
-        <div
-          style={{ position: 'absolute', top: 0, left: 0, width: '94%', height: '100%', zIndex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center', padding: '0 1rem' }}
-        >
-          <h1
-            style={{ fontSize: '10vh', fontWeight: '700', color: '#fff', transition: 'all 0.3s ease', WebkitTextStroke: '0px' }}
-            onMouseEnter={(e) => {
-              e.target.style.color = 'transparent';
-              e.target.style.WebkitTextStroke = '1px white';
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.color = '#fff';
-              e.target.style.WebkitTextStroke = '0px';
-            }}
-          >
-            Welcome to FirstTrip Travels
-          </h1>
-          <p style={{ fontSize: '1.2rem', maxWidth: '600px', color: '#fff' }}>
-            "Explore top locations of Northeast with custom travel packages and unbeatable experiences."
-          </p>
+        <div style={heroContentStyle}>
+          <h1 style={heroTitleStyle}>Welcome to FirstTrip Travels</h1>
+          <p style={heroSubtitleStyle}>"Explore top locations of Northeast with custom travel packages and unbeatable experiences."</p>
         </div>
-
-        <div
-          style={{ position: 'absolute', top: '1.5rem', right: '2rem', zIndex: 10, display: 'flex', gap: '1rem' }}
-        >
-          {!token ? (
-            <>
-              <Link to="/login" style={{ ...authBtnStyle, backgroundColor: '#154a4a' }}>
-                Login
-              </Link>
-              <Link to="/signup" style={{ ...authBtnStyle, backgroundColor: '#198754' }}>
-                Signup
-              </Link>
-            </>
-          ) : (
-            <>
-              <Link to="/wishlist" style={{ ...authBtnStyle, backgroundColor: '#0d6efd' }}>
-                Wishlist
-              </Link>
-              <Link to="/my-bookings" style={{ ...authBtnStyle, backgroundColor: '#6f42c1' }}>
-                My Bookings
-              </Link>
-              <button onClick={handleLogout} style={{ ...authBtnStyle, backgroundColor: '#dc3545' }}>
-                Logout
-              </button>
-            </>
-          )}
-
-
-        </div>
+        <AuthButtons isLoggedIn={isLoggedIn} onLogoutClick={() => setIsLogoutModalOpen(true)} />
       </section>
 
-      {/* Services Section - no changes */}
-
-      {/* Locations Section - Heart added */}
-      <section id="locations" style={{ padding: '3rem 2rem', backgroundColor: '#fff' }}>
-        <h2 style={{ textAlign: 'center', marginBottom: '2rem' }}>Popular Locations</h2>
-        <div style={locationGridStyle}>
-          {locations.map((loc, idx) => (
-            <div key={idx} style={{ position: 'relative', borderRadius: '10px', overflow: 'hidden', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)', height: '300px' }}>
-              <img src={loc.image} alt={loc.name} style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0 }} />
-              <div style={{ position: 'absolute', bottom: '1rem', left: '1rem', color: '#fff', textShadow: '1px 1px 3px rgba(0,0,0,0.6)', zIndex: 2 }}>
-                <h3 style={{ margin: 0, fontSize: '1.3rem', fontWeight: 700 }}>{loc.name}</h3>
-                <p style={{ margin: 0 }}>{loc.state}</p>
-              </div>
-              <button onClick={() => navigate(`/register-package?package=${encodeURIComponent(loc.name)}`)} style={{ position: 'absolute', top: '1rem', left: '1rem', backgroundColor: '#154a4a', color: '#fff', border: 'none', padding: '0.4rem 1rem', borderRadius: '8px', fontWeight: 600, cursor: 'pointer', zIndex: 2 }}>Register</button>
-              {token && (
-                <button
-                  onClick={() => handleToggleWishlist(loc, 'location')}
-                  style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'none', border: 'none', cursor: 'pointer', zIndex: 2 }}
-                  title="Toggle wishlist"
-                >
-                  {likedLocations.includes(loc.name) ? (
-                    <FaHeart color="red" size={20} />
-                  ) : (
-                    <FaRegHeart color="white" size={20} />
-                  )}
-                </button>
-              )}
-              <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0, 0, 0, 0.1)', zIndex: 1 }} />
-            </div>
+      <section id="locations" style={sectionStyle}>
+        <h2 style={sectionTitleStyle}>Popular Locations</h2>
+        <div style={gridStyle}>
+          {locations.map((loc) => (
+            <LocationCard
+              key={loc.name}
+              loc={loc}
+              isLiked={likedLocations.includes(loc.name)}
+              onToggle={handleToggleWishlist}
+              isLoggedIn={isLoggedIn}
+            />
           ))}
         </div>
       </section>
 
-      {/* Packages Section - Heart added */}
-      <section id="packages" style={{ padding: '3rem 2rem', backgroundColor: '#f9f9f9' }}>
-        <h2 style={{ textAlign: 'center', marginBottom: '2rem' }}>Packages</h2>
-        <div style={cardGridStyle}>
-          {packages.map((pkg, idx) => (
-            <div key={idx} style={{ ...cardStyle, padding: '1.5rem' }}>
-              <img src={pkg.image} alt={pkg.name} style={imgStyle} />
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1rem' }}>
-                <h3>{pkg.name}</h3>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <button onClick={() => navigate(`/register-package?package=${encodeURIComponent(pkg.name)}`)} style={{ backgroundColor: '#154a4a', color: '#fff', padding: '0.4rem 1rem', borderRadius: '6px', border: 'none', cursor: 'pointer', fontWeight: 600, opacity: 0.9 }}>Register</button>
-                  {token && (
-                    <button onClick={() => handleToggleWishlist(pkg, 'package')} style={{ background: 'none', border: 'none', cursor: 'pointer', marginLeft: '8px' }} title="Toggle wishlist">
-                      {likedPackages.includes(pkg.name) ? <FaHeart color="red" size={20} /> : <FaRegHeart color="#555" size={20} />}
-                    </button>
-                  )}
-                </div>
-              </div>
-              <ul style={{ marginTop: '0.5rem', paddingLeft: '1rem', textAlign: 'left' }}>
-                {pkg.features.map((feature, i) => (
-                  <li key={i} style={{ color: '#555', marginBottom: '0.25rem' }}>{feature}</li>
-                ))}
-              </ul>
-            </div>
+      <section id="packages" style={{ ...sectionStyle, backgroundColor: '#f9f9f9' }}>
+        <h2 style={sectionTitleStyle}>Packages</h2>
+        <div style={gridStyle}>
+          {packages.map((pkg) => (
+            <PackageCard
+              key={pkg.name}
+              pkg={pkg}
+              isLiked={likedPackages.includes(pkg.name)}
+              onToggle={handleToggleWishlist}
+              isLoggedIn={isLoggedIn}
+            />
           ))}
         </div>
       </section>
@@ -243,41 +261,37 @@ console.log("Token:", token);
   );
 };
 
-const authBtnStyle = {
-  padding: '0.5rem 1rem',
-  color: '#fff',
-  borderRadius: '6px',
-  fontWeight: 600,
-  textDecoration: 'none',
-  border: 'none',
-  cursor: 'pointer',
-  transition: 'all 0.3s ease',
-};
+// --- Styles --- (Defined outside components to prevent re-creation on render)
+const authBtnStyle = { padding: '0.5rem 1rem', color: '#fff', borderRadius: '6px', fontWeight: 600, textDecoration: 'none', border: 'none', cursor: 'pointer', transition: 'all 0.3s ease' };
+const sectionStyle = { padding: '3rem 2rem' };
+const sectionTitleStyle = { textAlign: 'center', marginBottom: '2rem', fontSize: '2rem' };
+const gridStyle = { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem' };
 
-const cardGridStyle = {
-  display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-  gap: '2rem',
-};
+// Hero Section Styles
+const heroSectionStyle = { position: 'relative', width: '100%', height: '100vh', overflow: 'hidden' };
+const heroVideoStyle = { position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0 };
+const heroContentStyle = { position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center', padding: '0 1rem' };
+const heroTitleStyle = { fontSize: '10vh', fontWeight: '700', color: '#fff' };
+const heroSubtitleStyle = { fontSize: '1.2rem', maxWidth: '600px', color: '#fff' };
 
-const cardStyle = {
-  backgroundColor: '#fff',
-  borderRadius: '10px',
-  boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
-  overflow: 'hidden',
-  textAlign: 'center',
-};
+// Location Card Styles
+const locationCardStyle = { position: 'relative', borderRadius: '10px', overflow: 'hidden', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)', height: '350px' };
+const locationImgStyle = { width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0 };
+const locationOverlayStyle = { position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 50%)', zIndex: 1 };
+const locationContentStyle = { position: 'absolute', bottom: '1rem', left: '1rem', color: '#fff', textShadow: '1px 1px 3px rgba(0,0,0,0.6)', zIndex: 2 };
+const registerBtnStyle = { position: 'absolute', top: '1rem', left: '1rem', backgroundColor: '#154a4a', color: '#fff', border: 'none', padding: '0.4rem 1rem', borderRadius: '8px', fontWeight: 600, cursor: 'pointer', zIndex: 2 };
+const wishlistBtnStyle = { position: 'absolute', top: '1rem', right: '1rem', background: 'none', border: 'none', cursor: 'pointer', zIndex: 2 };
 
-const locationGridStyle = {
-  display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-  gap: '2rem',
-};
+// Package Card Styles
+const packageCardStyle = { backgroundColor: '#fff', borderRadius: '10px', boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)', overflow: 'hidden', display: 'flex', flexDirection: 'column' };
+const packageImgStyle = { width: '100%', height: '220px', objectFit: 'cover' };
+const pkgRegisterBtnStyle = { backgroundColor: '#154a4a', color: '#fff', padding: '0.4rem 1rem', borderRadius: '6px', border: 'none', cursor: 'pointer', fontWeight: 600 };
+const pkgWishlistBtnStyle = { background: 'none', border: 'none', cursor: 'pointer', marginLeft: '8px' };
 
-const imgStyle = {
-  width: '100%',
-  height: '300px',
-  objectFit: 'cover',
-};
+// Modal Styles
+const modalOverlayStyle = { position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0, 0, 0, 0.6)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 };
+const modalContentStyle = { backgroundColor: '#fff', padding: '2rem', borderRadius: '8px', boxShadow: '0 5px 15px rgba(0,0,0,0.3)', width: '90%', maxWidth: '400px', textAlign: 'center' };
+const modalActionsStyle = { display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '1.5rem' };
+const modalButtonStyle = { padding: '0.5rem 1.2rem', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', color: '#fff' };
 
 export default HomePage;
