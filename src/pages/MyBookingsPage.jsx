@@ -27,25 +27,30 @@ const MyBookingsPage = () => {
     }
   };
 
+  // Custom label formatter
   const formatLabel = (key) => {
     switch (key) {
-      case 'created_at':
-        return 'Booked On';
-      case 'travel_date':
-        return 'Travel Date';
       case 'destination':
         return 'Destination';
+      case 'travel_date':
+        return 'Travel Date';
       case 'num_people':
         return 'Number of People';
+      case 'created_at':
+        return 'Booked On';
       default:
         return key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
     }
   };
 
+  // Custom value formatter
   const renderValue = (key, value) => {
     if ((key.includes('date') || key === 'created_at') && value) {
       const date = new Date(value);
-      return isNaN(date) ? value : date.toLocaleString(); // includes time
+      return isNaN(date) ? value : date.toLocaleString(undefined, {
+        dateStyle: 'medium',
+        timeStyle: 'short',
+      });
     }
     return value?.toString() || 'N/A';
   };
@@ -67,11 +72,14 @@ const MyBookingsPage = () => {
                 borderRadius: '8px',
               }}
             >
-              {Object.entries(booking).map(([key, value]) => (
-                <p key={key}>
-                  <strong>{formatLabel(key)}:</strong> {renderValue(key, value)}
-                </p>
-              ))}
+              {Object.entries(booking).map(([key, value]) => {
+                if (['_id', '__v'].includes(key)) return null; // skip internal fields
+                return (
+                  <p key={key}>
+                    <strong>{formatLabel(key)}:</strong> {renderValue(key, value)}
+                  </p>
+                );
+              })}
               <button
                 onClick={() => handleCancel(booking._id)}
                 style={{
