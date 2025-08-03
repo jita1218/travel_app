@@ -13,6 +13,10 @@ const useBlogSubmit = () => {
         setLoading(true);
         setError(null);
 
+        // Split and log destination for debugging
+        console.log("Submitted destination (raw):", destination);
+        console.log("Submitted destination (chars):", destination.split(""));
+
         try {
             const payload = {
                 destination: normalizeString(destination),
@@ -20,7 +24,7 @@ const useBlogSubmit = () => {
                 rating
             };
 
-            console.log("Submitting:", payload);
+            console.log("Normalized Payload:", payload);
 
             const response = await fetch(`${API_BASE}/api/blog/review`, {
                 method: "POST",
