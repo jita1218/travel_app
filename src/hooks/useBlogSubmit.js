@@ -2,55 +2,60 @@ import { useState } from "react";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
-const useBlogSubmit = () => {
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
+const useBlogSubmit = (bookings = []) => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-    // Helper to normalize strings
-    const normalizeString = (str) => str.trim().toLowerCase();
+  const normalize = (str) => str.trim().toLowerCase();
 
-    const submitBlog = async ({ destination, review, rating }) => {
-        setLoading(true);
-        setError(null);
+  const submitBlog = async ({ destination, review, rating, username }) => {
+    setLoading(true);
+    setError(null);
 
-        // Split and log destination for debugging
-        console.log("Submitted destination (raw):", destination);
-        console.log("Submitted destination (chars):", destination.split(""));
+    const normalizedDest = normalize(destination);
+    const bookedDests = bookings.map((b) => normalize(b.destination));
 
-        try {
-            const payload = {
-                destination: normalizeString(destination),
-                review,
-                rating
-            };
+    console.log("Submitted:", normalizedDest);
+    console.log("Booked   :", bookedDests);
 
-            console.log("Normalized Payload:", payload);
+    // Check if destination is in booked destinations
+    if (!bookedDests.includes(normalizedDest)) {
+      setError("You can only review destinations you have booked.");
+      setLoading(false);
+      return;
+    }
 
-            const response = await fetch(`${API_BASE}/api/blog/review`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(payload),
-            });
+    try {
+      const payload = {
+        destination: destination.trim(), // Send original casing to backend
+        review,
+        rating,
+        username,
+      };
 
-            const data = await response.json();
+      const response = await fetch(`${API_BASE}/api/blog/review`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
 
-            if (!response.ok) {
-                console.error("Submission failed:", data);
-                throw new Error(data.error || "Failed to submit");
-            }
+      const data = await response.json();
 
-            console.log("Review submitted:", data);
-        } catch (err) {
-            console.error("Error:", err.message);
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
-    };
+      if (!response.ok) {
+        console.error("Submission failed:", data);
+        throw new Error(data.error || "Failed to submit");
+      }
 
-    return { submitBlog, loading, error };
+      console.log("Review submitted:", data);
+    } catch (err) {
+      console.error("Error:", err.message);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { submitBlog, loading, error };
 };
 
 export default useBlogSubmit;
