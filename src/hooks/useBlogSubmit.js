@@ -1,16 +1,25 @@
 import { useState } from "react";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
+
 const useBlogSubmit = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+
+    // Helper to normalize strings
+    const normalizeString = (str) => str.trim().toLowerCase();
 
     const submitBlog = async ({ destination, review, rating }) => {
         setLoading(true);
         setError(null);
 
         try {
-            const payload = { destination, review, rating };
+            const payload = {
+                destination: normalizeString(destination),
+                review,
+                rating
+            };
+
             console.log("Submitting:", payload);
 
             const response = await fetch(`${API_BASE}/api/blog/review`, {
