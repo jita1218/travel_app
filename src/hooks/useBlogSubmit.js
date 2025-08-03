@@ -1,7 +1,6 @@
 import { useState } from "react";
 
-const API_BASE = "https://travel-app-rfuf.onrender.com/api/blog";
-
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
 const useBlogSubmit = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -14,7 +13,7 @@ const useBlogSubmit = () => {
             const payload = { destination, review, rating };
             console.log("Submitting:", payload);
 
-            const response = await fetch(`${API_BASE}/review`, {
+            const response = await fetch(`${API_BASE}/api/blog/review`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
