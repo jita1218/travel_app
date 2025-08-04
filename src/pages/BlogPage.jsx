@@ -1,31 +1,26 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import useBlogSubmit from "../hooks/useBlogSubmit";
 
 const BlogPage = () => {
-    const [blogs, setBlogs] = useState([]);
-    const navigate = useNavigate();
-const API_BASE = import.meta.env.VITE_API_BASE_URL;
-const username = localStorage.getItem("username");
-    useEffect(() => {
-        const fetchBlogs = async () => {
-    try {
-        const res = await fetch(`${API_BASE}/api/blog/reviews?username=${username}`);
-        const data = await res.json();
-        console.log("Fetched data:", data);
+  const [bookings, setBookings] = useState([]);
+  const username = localStorage.getItem("username");
+  const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
-        const validBlogs = data.filter(
-            (blog) => blog.destination && blog.review && blog.rating
-        );
-        console.log("Valid blogs:", validBlogs);
+  const { submitBlog, loading, error } = useBlogSubmit(bookings);
 
-        setBlogs(validBlogs);
-    } catch (err) {
-        console.error("Error fetching blogs:", err);
-    }
-};
+  useEffect(() => {
+    const fetchBookings = async () => {
+      const res = await fetch(`${API_BASE}/api/booking/${username}`, {
+        credentials: "include",
+      });
+      const data = await res.json();
+      console.log("Fetched bookings:", data); // 👈 must include destination key
+      setBookings(data); // Make sure each item has a `destination` field
+    };
 
-        fetchBlogs();
-    }, []);
+    fetchBookings();
+  }, []);
+
 
     return (
         <div style={{ padding: "2rem", fontFamily: "'Poppins', sans-serif" }}>
