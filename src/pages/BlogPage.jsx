@@ -8,18 +8,21 @@ const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
     useEffect(() => {
         const fetchBlogs = async () => {
-            try {
-                const res = await fetch("{API_BASE}/api/blog/reviews");
-                const data = await res.json();
+    try {
+        const res = await fetch(`${API_BASE}/api/blog/reviews`);
+        const data = await res.json();
+        console.log("Fetched data:", data);
 
-                const validBlogs = data.filter(
-                    (blog) => blog.destination && blog.review && blog.rating
-                );
-                setBlogs(validBlogs);
-            } catch (err) {
-                console.error("Error fetching blogs:", err);
-            }
-        };
+        const validBlogs = data.filter(
+            (blog) => blog.destination && blog.review && blog.rating
+        );
+        console.log("Valid blogs:", validBlogs);
+
+        setBlogs(validBlogs);
+    } catch (err) {
+        console.error("Error fetching blogs:", err);
+    }
+};
 
         fetchBlogs();
     }, []);
