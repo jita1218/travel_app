@@ -5,11 +5,11 @@ const BlogPage = () => {
     const [blogs, setBlogs] = useState([]);
     const navigate = useNavigate();
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
-
+const username = localStorage.getItem("username");
     useEffect(() => {
         const fetchBlogs = async () => {
     try {
-        const res = await fetch(`${API_BASE}/api/blog/review`);
+        const res = await fetch(`${API_BASE}/api/blog/reviews?username=${username}`);
         const data = await res.json();
         console.log("Fetched data:", data);
 
