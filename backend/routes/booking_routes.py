@@ -23,7 +23,7 @@ def get_user_bookings():
     username = request.args.get("username")
     return get_user_bookings_controller(username)
 
-@booking_bp.route("/cancel", methods=["DELETE","OPTIONS"])
+@booking_bp.route("/cancel", methods=["DELETE"])
 def cancel_booking():
     # Endpoint to cancel an existing booking
     print("Cancelling a booking")
