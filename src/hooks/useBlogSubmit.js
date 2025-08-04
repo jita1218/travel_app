@@ -6,20 +6,26 @@ const useBlogSubmit = (bookings = []) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const normalize = (str) => str.trim().toLowerCase();
+  // Improved normalization to handle casing, spacing, and special characters
+  const normalize = (str) =>
+    str
+      ?.normalize("NFD")             // Normalize accented characters
+      .replace(/\s+/g, " ")          // Collapse multiple spaces
+      .trim()
+      .toLowerCase();
 
   const submitBlog = async ({ destination, review, rating, username }) => {
     setLoading(true);
     setError(null);
 
     const normalizedDest = normalize(destination);
-    const bookedDests = bookings.map((b) => normalize(b.destination));
+    const bookedSet = new Set(bookings.map((b) => normalize(b.destination)));
 
     console.log("Submitted:", normalizedDest);
-    console.log("Booked   :", bookedDests);
+    console.log("Booked Set:", [...bookedSet]);
 
     // Validate destination
-    if (!bookedDests.includes(normalizedDest)) {
+    if (!bookedSet.has(normalizedDest)) {
       setError("You can only review destinations you have booked.");
       setLoading(false);
       return;
@@ -27,7 +33,7 @@ const useBlogSubmit = (bookings = []) => {
 
     try {
       const payload = {
-        destination: destination.trim(), // retain original casing
+        destination: destination.trim(), // keep original casing for submission
         review,
         rating,
         username,
@@ -35,7 +41,7 @@ const useBlogSubmit = (bookings = []) => {
 
       const response = await fetch(`${API_BASE}/api/blog/review`, {
         method: "POST",
-        credentials: "include", // optional, depending on your backend auth
+        credentials: "include", // depending on your backend
         headers: {
           "Content-Type": "application/json",
         },
