@@ -28,23 +28,24 @@ const MyBookingsPage = () => {
     fetchBookings();
   }, [username]);
 
-  const handleCancel = async (booking) => {
-    const confirmCancel = window.confirm(`Cancel booking for ${booking.destination}?`);
-    if (!confirmCancel) return;
-
+  const handleCancel = async (username, destination) => {
     try {
-      const res = await axios.delete(`${API_BASE}/api/booking/cancel`, {
-        params: {
-          username,
-          destination: booking.destination,
-        },
-      });
+        const res = await fetch(`${API_BASE}/api/booking/cancel`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ username, destination }),
+        });
 
-      setBookings((prev) => prev.filter((b) => b.destination !== booking.destination));
+        const data = await res.json();
+        console.log("Cancelled:", data);
+        // Optionally, refresh bookings
     } catch (err) {
-      alert('Failed to cancel booking. Please try again.');
+        console.error("Error cancelling booking:", err);
     }
-  };
+};
+
 
   const formatLabel = (key) => {
     const labels = {
