@@ -10,16 +10,6 @@ const BlogForm = ({ bookings }) => {
   });
 
   const { submitBlog, loading, error } = useBlogSubmit(bookings);
-
-  useEffect(() => {
-    // Auto-select the first destination if available
-    if (bookings.length > 0 && !formData.destination) {
-      setFormData((prev) => ({
-        ...prev,
-        destination: bookings[0].destination
-      }));
-    }
-  }, [bookings]);
   
   const handleChange = (e) => {
     const { name, value } = e.target;
