@@ -5,27 +5,32 @@ const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 const MyBookingsPage = () => {
   const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(true);
   const username = localStorage.getItem('username');
 
   useEffect(() => {
     if (!username) return;
 
-    axios
-      .get(`${API_BASE}/api/booking/my`, {
-        params: { username },
-      })
-      .then((res) => {
-        console.log("Fetched bookings:", res.data);
+    const fetchBookings = async () => {
+      try {
+        const res = await axios.get(`${API_BASE}/api/booking/my`, {
+          params: { username },
+        });
         setBookings(res.data);
-      })
-      .catch((err) =>
-        console.error('Failed to fetch bookings:', err.response?.data || err.message)
-      );
+      } catch (err) {
+        console.error('Failed to fetch bookings:', err.response?.data || err.message);
+        alert('Failed to load bookings.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBookings();
   }, [username]);
 
   const handleCancel = async (booking) => {
-    console.log('Attempting to cancel booking with:', booking);
-    console.log("API_BASE is:", API_BASE);
+    const confirmCancel = window.confirm(`Cancel booking for ${booking.destination}?`);
+    if (!confirmCancel) return;
 
     try {
       const res = await axios.delete(`${API_BASE}/api/booking/cancel`, {
@@ -36,7 +41,6 @@ const MyBookingsPage = () => {
       });
 
       console.log('Cancellation response:', res.data);
-
       setBookings((prev) =>
         prev.filter((b) => b.destination !== booking.destination)
       );
@@ -47,18 +51,13 @@ const MyBookingsPage = () => {
   };
 
   const formatLabel = (key) => {
-    switch (key) {
-      case 'destination':
-        return 'Destination';
-      case 'travel_date':
-        return 'Travel Date';
-      case 'num_people':
-        return 'Number of People';
-      case 'created_at':
-        return 'Booked On';
-      default:
-        return key.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
-    }
+    const labels = {
+      destination: 'Destination',
+      travel_date: 'Travel Date',
+      num_people: 'Number of People',
+      created_at: 'Booked On',
+    };
+    return labels[key] || key.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
   };
 
   const renderValue = (key, value) => {
@@ -76,8 +75,11 @@ const MyBookingsPage = () => {
 
   return (
     <div style={{ padding: '2rem' }}>
-      <h2>My Bookings</h2>
-      {bookings.length === 0 ? (
+      <h2 style={{ marginBottom: '1rem' }}>My Bookings</h2>
+
+      {loading ? (
+        <p>Loading your bookings...</p>
+      ) : bookings.length === 0 ? (
         <p>You haven’t booked anything yet.</p>
       ) : (
         <ul style={{ listStyle: 'none', padding: 0 }}>
@@ -89,6 +91,7 @@ const MyBookingsPage = () => {
                 border: '1px solid #ccc',
                 padding: '1rem',
                 borderRadius: '8px',
+                boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
               }}
             >
               {Object.entries(booking).map(([key, value]) => {
