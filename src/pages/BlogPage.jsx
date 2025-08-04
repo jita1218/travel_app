@@ -9,7 +9,7 @@ const username = localStorage.getItem("username");
     useEffect(() => {
         const fetchBlogs = async () => {
     try {
-        const res = await fetch(${API_BASE}/api/blog/reviews?username=${username});
+        const res = await fetch(`${API_BASE}/api/blog/reviews?username=${username}`);
         const data = await res.json();
         console.log("Fetched data:", data);
 
