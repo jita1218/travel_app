@@ -35,6 +35,7 @@ const useBlogSubmit = (bookings = []) => {
 
       const response = await fetch(`${API_BASE}/api/blog/review`, {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
