@@ -1,74 +1,68 @@
-import { useEffect, useState } from "react";
-import useBlogSubmit from "../hooks/useBlogSubmit";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const BlogPage = () => {
-  const [bookings, setBookings] = useState([]);
-  const username = localStorage.getItem("username");
-  const API_BASE = import.meta.env.VITE_API_BASE_URL;
+  const [wishlist, setWishlist] = useState([]);
+  const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
-  const { submitBlog, loading, error } = useBlogSubmit(bookings);
+  const API_BASE = import.meta.env.VITE_API_BASE_URL;
+  const username = localStorage.getItem("username");
 
   useEffect(() => {
-    const fetchBookings = async () => {
-      const res = await fetch(`${API_BASE}/api/booking/${username}`, {
-        credentials: "include",
-      });
-      const data = await res.json();
-      console.log("Fetched bookings:", data); // 👈 must include destination key
-      setBookings(data); // Make sure each item has a `destination` field
+    const fetchWishlist = async () => {
+      try {
+        const response = await axios.get(
+          `${API_BASE}/wishlist/get?username=${username}`
+        );
+        setWishlist(response.data.destinations || []);
+        if ((response.data.destinations || []).length === 0) {
+          setMessage("You can only review destinations you have booked.");
+        }
+      } catch (error) {
+        console.error("Failed to fetch wishlist:", error);
+        setMessage("Something went wrong.");
+      }
     };
 
-    fetchBookings();
-  }, []);
+    if (username) {
+      fetchWishlist();
+    } else {
+      setMessage("You are not logged in.");
+    }
+  }, [API_BASE, username]);
 
+  const handleReviewClick = (destination) => {
+    navigate("/review", { state: { destination } });
+  };
 
-    return (
-        <div style={{ padding: "2rem", fontFamily: "'Poppins', sans-serif" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "3rem" }}>
-                <h1 style={{ marginLeft: "5rem" }}>Traveler Blogs</h1>
-                <button
-                    onClick={() => navigate("/blogform")}
-                    style={{
-                        marginRight: "5rem",
-                        padding: "0.5rem 1rem",
-                        backgroundColor: "#154a4a",
-                        color: "#fff",
-                        border: "none",
-                        borderRadius: "8px",
-                        fontSize: "1rem",
-                        cursor: "pointer",
-                    }}
-                >
-                    Blog
-                </button>
+  return (
+    <div>
+      <h1 className="text-3xl font-bold mb-4 text-center mt-6">Write a Review</h1>
+      {message && <p className="text-red-500 text-center mt-4">{message}</p>}
+
+      <div className="flex flex-wrap justify-center mt-6">
+        {wishlist.map((destination, index) => (
+          <div
+            key={index}
+            className="max-w-xs mx-2 mb-4 bg-white rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition"
+            onClick={() => handleReviewClick(destination)}
+          >
+            <img
+              className="w-full h-48 object-cover"
+              src={destination.image}
+              alt={destination.name}
+            />
+            <div className="p-4">
+              <h2 className="text-xl font-semibold">{destination.name}</h2>
+              <p className="text-gray-600 text-sm">{destination.description}</p>
             </div>
-
-            {blogs.length === 0 ? (
-                <p style={{ textAlign: "center", fontSize: "1.2rem", color: "#666" }}>
-                    No blogs found.
-                </p>
-            ) : (
-                blogs.map((blog, i) => (
-                    <div
-                        key={i}
-                        style={{
-                            background: "#e9f6f2",
-                            marginBottom: "2rem",
-                            padding: "1rem",
-                            borderRadius: "12px",
-                            maxWidth: "800px",
-                            margin: "1rem auto",
-                            boxShadow: "0 0 6px rgba(0,0,0,0.1)",
-                        }}
-                    >
-                        <h3 style={{ margin: 0 }}>{blog.destination}</h3>
-                        <p style={{ margin: "1rem 0" }}>{blog.review}</p>
-                        <p style={{ fontStyle: "italic" }}>Rating: {blog.rating}</p>
-                    </div>
-                ))
-            )}
-        </div>
-    );
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 };
 
 export default BlogPage;
