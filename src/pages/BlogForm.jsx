@@ -3,10 +3,10 @@ import useBlogSubmit from "../hooks/useBlogSubmit";
 
 const BlogForm = ({ bookings }) => {
   const [formData, setFormData] = useState({
+username:"",
     destination: "",
     review: "",
-    rating: "",
-    username: "", // Add username field
+    rating: ""
   });
 
   const { submitBlog, loading, error } = useBlogSubmit(bookings);
