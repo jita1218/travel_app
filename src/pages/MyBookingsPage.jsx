@@ -28,23 +28,29 @@ const MyBookingsPage = () => {
     fetchBookings();
   }, [username]);
 
-  const handleCancel = async (username, destination) => {
-    try {
-        const res = await fetch(`${API_BASE}/api/booking/cancel`, {
-            method: "DELETE",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ username, destination }),
-        });
+ const handleCancel = async (username, destination) => {
+  try {
+    const res = await fetch(`${API_BASE}/api/booking/cancel`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ username, destination }),
+    });
 
-        const data = await res.json();
-        console.log("Cancelled:", data);
-        // Optionally, refresh bookings
-    } catch (err) {
-        console.error("Error cancelling booking:", err);
+    if (!res.ok) {
+      const errorData = await res.json();
+      console.error('Cancel failed:', errorData);
+      return;
     }
+
+    alert('Booking cancelled successfully!');
+    // Optionally refresh bookings
+  } catch (error) {
+    console.error('Error cancelling booking:', error);
+  }
 };
+
 
 
   const formatLabel = (key) => {
