@@ -4,11 +4,12 @@ import { useNavigate } from "react-router-dom";
 const BlogPage = () => {
     const [blogs, setBlogs] = useState([]);
     const navigate = useNavigate();
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
     useEffect(() => {
         const fetchBlogs = async () => {
             try {
-                const res = await fetch("https://travel-app-rfuf.onrender.com/api/blog/reviews");
+                const res = await fetch("{API_BASE}/api/blog/reviews");
                 const data = await res.json();
 
                 const validBlogs = data.filter(
