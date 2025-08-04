@@ -3,7 +3,7 @@ import useBlogSubmit from "../hooks/useBlogSubmit";
 
 const BlogForm = ({ bookings }) => {
   const [formData, setFormData] = useState({
-    username: localStorage.getItem("username") || "",
+    username: "",
     destination: "",
     review: "",
     rating: ""
