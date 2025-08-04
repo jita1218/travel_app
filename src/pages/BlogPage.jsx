@@ -9,7 +9,7 @@ const API_BASE = import.meta.env.VITE_API_BASE_URL;
     useEffect(() => {
         const fetchBlogs = async () => {
     try {
-        const res = await fetch(`${API_BASE}/api/blog/reviews`);
+        const res = await fetch(`${API_BASE}/api/blog/review`);
         const data = await res.json();
         console.log("Fetched data:", data);
 
