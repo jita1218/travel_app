@@ -18,7 +18,7 @@ const useBlogSubmit = (bookings = []) => {
     console.log("Submitted:", normalizedDest);
     console.log("Booked   :", bookedDests);
 
-    // Check if destination is in booked destinations
+    // Validate destination
     if (!bookedDests.includes(normalizedDest)) {
       setError("You can only review destinations you have booked.");
       setLoading(false);
@@ -27,7 +27,7 @@ const useBlogSubmit = (bookings = []) => {
 
     try {
       const payload = {
-        destination: destination.trim(), // Send original casing to backend
+        destination: destination.trim(), // retain original casing
         review,
         rating,
         username,
@@ -35,8 +35,10 @@ const useBlogSubmit = (bookings = []) => {
 
       const response = await fetch(`${API_BASE}/api/blog/review`, {
         method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
+        credentials: "include", // optional, depending on your backend auth
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify(payload),
       });
 
@@ -44,10 +46,10 @@ const useBlogSubmit = (bookings = []) => {
 
       if (!response.ok) {
         console.error("Submission failed:", data);
-        throw new Error(data.error || "Failed to submit");
+        throw new Error(data.error || "Failed to submit review.");
       }
 
-      console.log("Review submitted:", data);
+      console.log("Review submitted successfully:", data);
     } catch (err) {
       console.error("Error:", err.message);
       setError(err.message);
