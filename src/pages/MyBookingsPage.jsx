@@ -40,12 +40,8 @@ const MyBookingsPage = () => {
         },
       });
 
-      console.log('Cancellation response:', res.data);
-      setBookings((prev) =>
-        prev.filter((b) => b.destination !== booking.destination)
-      );
+      setBookings((prev) => prev.filter((b) => b.destination !== booking.destination));
     } catch (err) {
-      console.error('Failed to cancel booking:', err.response?.data || err.message);
       alert('Failed to cancel booking. Please try again.');
     }
   };
@@ -57,7 +53,7 @@ const MyBookingsPage = () => {
       num_people: 'Number of People',
       created_at: 'Booked On',
     };
-    return labels[key] || key.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+    return labels[key] || key;
   };
 
   const renderValue = (key, value) => {
@@ -65,10 +61,7 @@ const MyBookingsPage = () => {
       const date = new Date(value);
       return isNaN(date)
         ? value
-        : date.toLocaleString(undefined, {
-            dateStyle: 'medium',
-            timeStyle: 'short',
-          });
+        : date.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
     }
     return value?.toString() || 'N/A';
   };
