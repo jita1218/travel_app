@@ -2,15 +2,14 @@ import { useState } from "react";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
-const useBlogSubmit = (bookings = []) => {
+const useBlogSubmit = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Improved normalization to handle casing, spacing, and special characters
   const normalize = (str) =>
     str
-      ?.normalize("NFD")             // Normalize accented characters
-      .replace(/\s+/g, " ")          // Collapse multiple spaces
+      ?.normalize("NFD")
+      .replace(/\s+/g, " ")
       .trim()
       .toLowerCase();
 
@@ -19,12 +18,13 @@ const useBlogSubmit = (bookings = []) => {
     setError(null);
 
     const normalizedDest = normalize(destination);
-    const bookedSet = new Set(bookings.map((b) => normalize(b.destination)));
+    const raw = localStorage.getItem("bookedDestinations") || "[]";
+    const bookedDests = JSON.parse(raw).map((d) => normalize(d));
+    const bookedSet = new Set(bookedDests); // ✅ Fix here
 
     console.log("Submitted:", normalizedDest);
     console.log("Booked Set:", [...bookedSet]);
 
-    // Validate destination
     if (!bookedSet.has(normalizedDest)) {
       setError("You can only review destinations you have booked.");
       setLoading(false);
@@ -33,7 +33,7 @@ const useBlogSubmit = (bookings = []) => {
 
     try {
       const payload = {
-        destination: destination.trim(), // keep original casing for submission
+        destination: destination.trim(),
         review,
         rating,
         username,
@@ -41,7 +41,7 @@ const useBlogSubmit = (bookings = []) => {
 
       const response = await fetch(`${API_BASE}/api/blog/review`, {
         method: "POST",
-        credentials: "include", // depending on your backend
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
