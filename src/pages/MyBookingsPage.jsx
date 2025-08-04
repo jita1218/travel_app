@@ -29,24 +29,30 @@ const MyBookingsPage = () => {
   }, [username]);
 
 
-  const handleCancel = async (booking) => {
-    const confirmCancel = window.confirm(`Cancel booking for ${booking.destination}?`);
-    if (!confirmCancel) return;
+const handleCancel = async (booking) => {
+  const confirmCancel = window.confirm(`Cancel booking for ${booking.destination}?`);
+  if (!confirmCancel) return;
 
-    try {
-      const res = await fetch(`${API_BASE}/api/booking/cancel`, {
-            method: "DELETE",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ username, destination }),
-        });
+  try {
+    const res = await fetch(`${API_BASE}/api/booking/cancel`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username, destination: booking.destination }),
+    });
 
-      setBookings((prev) => prev.filter((b) => b.destination !== booking.destination));
-    } catch (err) {
-      alert('Failed to cancel booking. Please try again.');
+    if (!res.ok) {
+      throw new Error("Cancellation failed");
     }
-  };
+
+    setBookings((prev) => prev.filter((b) => b.destination !== booking.destination));
+  } catch (err) {
+    alert("Failed to cancel booking. Please try again.");
+    console.error(err);
+  }
+};
+
 
 
   const formatLabel = (key) => {
