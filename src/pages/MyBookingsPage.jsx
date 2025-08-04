@@ -17,14 +17,15 @@ const MyBookingsPage = () => {
           params: { username },
         });
         setBookings(res.data);
-      } catch (err) {
-        console.error('Failed to fetch bookings:', err.response?.data || err.message);
-        alert('Failed to load bookings.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
+const destinations = res.data.map(b => b.destination);
+      localStorage.setItem("bookedDestinations", JSON.stringify(destinations));
+    } catch (err) {
+      console.error('Failed to fetch bookings:', err.response?.data || err.message);
+      alert('Failed to load bookings.');
+    } finally {
+      setLoading(false);
+    }
+  };
     fetchBookings();
   }, [username]);
 
