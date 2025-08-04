@@ -17,7 +17,9 @@ const MyBookingsPage = () => {
           params: { username },
         });
         setBookings(res.data);
-const destinations = res.data.map((b) => b.destination?.toLowerCase().trim());
+
+        // ✅ Store normalized destinations
+        const destinations = res.data.map((b) => b.destination?.toLowerCase().trim());
         localStorage.setItem("bookedDestinations", JSON.stringify(destinations));
       } catch (err) {
         console.error('Failed to fetch bookings:', err.response?.data || err.message);
@@ -26,28 +28,27 @@ const destinations = res.data.map((b) => b.destination?.toLowerCase().trim());
         setLoading(false);
       }
     };
+
     fetchBookings();
   }, [username]);
 
+  const handleCancel = async (booking) => {
+    const confirmCancel = window.confirm(`Cancel booking for ${booking.destination}?`);
+    if (!confirmCancel) return;
 
-const handleCancel = async (booking) => {
-  const confirmCancel = window.confirm(Cancel booking for ${booking.destination}?);
-  if (!confirmCancel) return;
+    try {
+      const res = await fetch(`${API_BASE}/api/booking/cancel`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, destination: booking.destination }),
+      });
 
-  try {
-    const res = await fetch(${API_BASE}/api/booking/cancel, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ username, destination: booking.destination }),
-    });
+      if (!res.ok) {
+        throw new Error("Cancellation failed");
+      }
 
-    if (!res.ok) {
-      throw new Error("Cancellation failed");
-    }
-
-   
       const updated = bookings.filter((b) => b.destination !== booking.destination);
       setBookings(updated);
 
@@ -59,9 +60,6 @@ const handleCancel = async (booking) => {
       console.error(err);
     }
   };
-
-
-
 
   const formatLabel = (key) => {
     const labels = {
