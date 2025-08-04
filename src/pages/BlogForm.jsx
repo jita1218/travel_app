@@ -3,7 +3,7 @@ import useBlogSubmit from "../hooks/useBlogSubmit";
 
 const BlogForm = ({ bookings }) => {
   const [formData, setFormData] = useState({
-username:"",
+    username: localStorage.getItem("username") || "",
     destination: "",
     review: "",
     rating: ""
@@ -11,6 +11,16 @@ username:"",
 
   const { submitBlog, loading, error } = useBlogSubmit(bookings);
 
+  useEffect(() => {
+    // Auto-select the first destination if available
+    if (bookings.length > 0 && !formData.destination) {
+      setFormData((prev) => ({
+        ...prev,
+        destination: bookings[0].destination
+      }));
+    }
+  }, [bookings]);
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
