@@ -8,24 +8,24 @@ const BlogForm = () => {
         rating: "",
     });
 
-    const { submitBlog, loading, error } = useBlogSubmit();
+    // const { submitBlog, loading, error } = useBlogSubmit();
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        await submitBlog(formData);
+    const { submitBlog, loading, error } = useBlogSubmit(bookings);
 
-        // Reset form on successful submit
-        setFormData({
-            destination: "",
-            review: "",
-            rating: "",
-        });
-    };
+const handleSubmit = async (formData) => {
+  await submitBlog({
+    destination: formData.destination,
+    review: formData.review,
+    rating: formData.rating,
+    username: formData.username,
+  });
+};
+
 
     return (
         <div style={{ padding: "2rem", maxWidth: "600px", margin: "auto" }}>
