@@ -107,26 +107,6 @@ const LogoutModal = ({ isOpen, onClose, onConfirm }) => {
   );
 };
 
-
-// --- Component: AuthButtons ---
-// const AuthButtons = ({ isLoggedIn, onLogoutClick }) => {
-//   return (
-//     <div style={{ position: 'absolute', top: '1.5rem', right: '2rem', zIndex: 10, display: 'flex', gap: '1rem' }}>
-//       {!isLoggedIn ? (
-//         <>
-//           <Link to="/login" style={{ ...authBtnStyle, backgroundColor: '#154a4a' }}>Login</Link>
-//           <Link to="/signup" style={{ ...authBtnStyle, backgroundColor: '#198754' }}>Signup</Link>
-//         </>
-//       ) : (
-//         <>
-//           <Link to="/wishlist" style={{ ...authBtnStyle, backgroundColor: '#0d6efd' }}>Wishlist</Link>
-//           <Link to="/my-bookings" style={{ ...authBtnStyle, backgroundColor: '#6f42c1' }}>My Bookings</Link>
-//           <button onClick={onLogoutClick} style={{ ...authBtnStyle, backgroundColor: '#dc3545' }}>Logout</button>
-//         </>
-//       )}
-//     </div>
-//   );
-// };
 const AuthButtons = ({ isLoggedIn, onLogoutClick }) => {
   const [showMenu, setShowMenu] = useState(false);
 
