@@ -10,6 +10,8 @@ import packages from '../data/packages';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
+
+
 // --- Custom Hook: useWishlist ---
 // Encapsulates all wishlist logic for reusability and separation of concerns.
 const useWishlist = (username) => {
@@ -107,21 +109,56 @@ const LogoutModal = ({ isOpen, onClose, onConfirm }) => {
 
 
 // --- Component: AuthButtons ---
+// const AuthButtons = ({ isLoggedIn, onLogoutClick }) => {
+//   return (
+//     <div style={{ position: 'absolute', top: '1.5rem', right: '2rem', zIndex: 10, display: 'flex', gap: '1rem' }}>
+//       {!isLoggedIn ? (
+//         <>
+//           <Link to="/login" style={{ ...authBtnStyle, backgroundColor: '#154a4a' }}>Login</Link>
+//           <Link to="/signup" style={{ ...authBtnStyle, backgroundColor: '#198754' }}>Signup</Link>
+//         </>
+//       ) : (
+//         <>
+//           <Link to="/wishlist" style={{ ...authBtnStyle, backgroundColor: '#0d6efd' }}>Wishlist</Link>
+//           <Link to="/my-bookings" style={{ ...authBtnStyle, backgroundColor: '#6f42c1' }}>My Bookings</Link>
+//           <button onClick={onLogoutClick} style={{ ...authBtnStyle, backgroundColor: '#dc3545' }}>Logout</button>
+//         </>
+//       )}
+//     </div>
+//   );
+// };
 const AuthButtons = ({ isLoggedIn, onLogoutClick }) => {
+  const [showMenu, setShowMenu] = useState(false);
+
+  const toggleDropdown = () => setShowMenu(prev => !prev);
+  const closeMenu = () => setShowMenu(false);
+
   return (
-    <div style={{ position: 'absolute', top: '1.5rem', right: '2rem', zIndex: 10, display: 'flex', gap: '1rem' }}>
-      {!isLoggedIn ? (
-        <>
-          <Link to="/login" style={{ ...authBtnStyle, backgroundColor: '#154a4a' }}>Login</Link>
-          <Link to="/signup" style={{ ...authBtnStyle, backgroundColor: '#198754' }}>Signup</Link>
-        </>
-      ) : (
-        <>
-          <Link to="/wishlist" style={{ ...authBtnStyle, backgroundColor: '#0d6efd' }}>Wishlist</Link>
-          <Link to="/my-bookings" style={{ ...authBtnStyle, backgroundColor: '#6f42c1' }}>My Bookings</Link>
-          <button onClick={onLogoutClick} style={{ ...authBtnStyle, backgroundColor: '#dc3545' }}>Logout</button>
-        </>
-      )}
+    <div style={{ position: 'absolute', top: '1.5rem', right: '2rem', zIndex: 10 }}>
+      <div style={dropdownContainerStyle}>
+        <button onClick={toggleDropdown} style={{ ...authBtnStyle }}>
+          {isLoggedIn ? 'My Profile' : 'Create Profile'}
+        </button>
+
+        {showMenu && (
+          <div style={dropdownMenuStyle}>
+            {!isLoggedIn ? (
+              <>
+                <Link to="/login" style={dropdownBtnStyle} onClick={closeMenu}>Login</Link>
+                <Link to="/signup" style={dropdownBtnStyle} onClick={closeMenu}>Signup</Link>
+              </>
+            ) : (
+              <>
+                <Link to="/wishlist" style={dropdownBtnStyle} onClick={closeMenu}>Wishlist</Link>
+                <Link to="/my-bookings" style={dropdownBtnStyle} onClick={closeMenu}>My Bookings</Link>
+                <button onClick={() => { onLogoutClick(); closeMenu(); }} style={dropdownBtnStyle}>
+                  Sign Out
+                </button>
+              </>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
@@ -261,8 +298,66 @@ const HomePage = () => {
   );
 };
 
+
+//login sign in button style
+const dropdownBtnStyle = {
+  width: '104px',             
+  padding: '0.4rem 1rem',
+  borderRadius: '4px',
+  border: '2px solid black',
+  backgroundColor: 'transparent',
+  color: 'black',
+  cursor: 'pointer',
+  textDecoration: 'none',
+  textAlign: 'center',
+  display: 'block',         
+  transition: 'background-color 0.5s',
+};
+
+const dropdownContainerStyle = {
+  position: 'relative',
+  alignItems: 'center',
+  justifyContent: 'center',
+  display: 'inline-block',
+};
+
+const dropdownMenuStyle = {
+  position: 'absolute',
+  top: '23px',
+  left: '50%',
+  transform: 'translateX(-50%)',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '0.1rem',
+  marginTop: '0.25rem',
+  backgroundColor: 'rgba(255, 255, 255, 0)',
+  padding: '0.5rem',
+  borderRadius: '0.25rem',
+  zIndex: 999,
+  alignItems: 'center', 
+};
+
+
+
+const authBtnStyle = {
+  width: '140px',  
+  fontWeight:'600',            
+  padding: '0.4rem 1rem',
+  borderRadius: '4px',
+  border: '2px solid black',
+  backgroundColor: 'transparent',
+  color: 'black',
+  cursor: 'pointer',
+  textDecoration: 'none',
+  textAlign: 'center',
+  display: 'block',        
+  transition: 'background-color 0.5s',
+};
+
+
 // --- Styles --- (Defined outside components to prevent re-creation on render)
-const authBtnStyle = { padding: '0.5rem 1rem', color: '#fff', borderRadius: '6px', fontWeight: 600, textDecoration: 'none', border: 'none', cursor: 'pointer', transition: 'all 0.3s ease' };
+
+//const authBtnStyle = { padding: '0.5rem 1rem', color: '#fff', borderRadius: '6px', fontWeight: 600, textDecoration: 'none', border: 'none', cursor: 'pointer', transition: 'all 0.3s ease' };
 const sectionStyle = { padding: '3rem 2rem' };
 const sectionTitleStyle = { textAlign: 'center', marginBottom: '2rem', fontSize: '2rem' };
 const gridStyle = { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem' };

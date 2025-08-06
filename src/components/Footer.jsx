@@ -5,7 +5,7 @@ const Footer = () => {
     const footerStyle = {
         backgroundColor: '#154a4a',
         color: '#fff',
-        padding: '3rem 2rem',
+        padding: '2rem 2rem',
         fontFamily: "'Poppins', sans-serif",
     };
 
@@ -72,7 +72,6 @@ const Footer = () => {
                     <h4 style={headingStyle}>Quick Links</h4>
                     <a href="/register" style={linkStyle}>Register</a>
                     <a href="/about" style={linkStyle}>About Us</a>
-                    <a href="/contact" style={linkStyle}>Contact Us</a>
                 </div>
 
                 {/* Connect */}

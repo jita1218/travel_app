@@ -3,30 +3,36 @@
 import React from 'react';
 import aboutImage from '../assets/aboutus.jpg';
 import { FaLinkedin } from 'react-icons/fa';
-import pimg from '../assets/profile.jpg';
+import tomojitImg from '../assets/tomojit.jpg';
+import birajImg from '../assets/biraj.jpg';
+import jituImg from '../assets/jitu.jpg';
+import tarunImg from '../assets/tarun.jpg';
+
 
 const teamMembers = [
     {
-        name: 'Member 1',
-        img: pimg,
-        linkedin: 'https://linkedin.com/in/member1',
+        name: 'Tomojit',
+        img: tomojitImg,
+        linkedin: 'https://www.linkedin.com/in/tomojit-purkayastha-4b7a8636b?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app',
     },
     {
-        name: 'Member 2',
-        img: pimg,
-        linkedin: 'https://linkedin.com/in/member2',
+        name: 'Biraj',
+        img: birajImg,
+        linkedin: 'https://www.linkedin.com/in/biraj-roy-04803b258/',
     },
     {
-        name: 'Member 3',
-        img: pimg,
-        linkedin: 'https://linkedin.com/in/member3',
+        name: 'Jitu',
+        img: jituImg,
+        linkedin: 'https://www.linkedin.com/in/jitu-verma',
     },
     {
-        name: 'Member 4',
-        img: pimg,
-        linkedin: 'https://linkedin.com/in/member4',
+        name: 'Tarun',
+        img: tarunImg,
+        linkedin: 'https://www.linkedin.com/in/tarunchandak2k04?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app',
     },
 ];
+
+
 
 const AboutPage = () => {
     return (
@@ -72,9 +78,11 @@ const AboutPage = () => {
                         <div
                             key={i}
                             style={{
-                                width: '100px',
+                                width: '110px',
                                 background: '#fff',
                                 padding: '1rem',
+                                justifyContent: 'center',
+                                alignItems: 'center',
                                 borderRadius: '12px',
                                 textAlign: 'center',
                                 boxShadow: '0 4px 12px rgba(0, 0, 0, 0.27)',
@@ -84,10 +92,10 @@ const AboutPage = () => {
                                 src={member.img}
                                 alt={member.name}
                                 style={{
-                                    width: '100px',
-                                    height: '100px',
+                                    width: '110px',
+                                    height: '110px',
                                     objectFit: 'cover',
-                                    borderRadius: '8px',
+                                    borderRadius: '55px',
                                     marginBottom: '0.8rem',
                                 }}
                             />
