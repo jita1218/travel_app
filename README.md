@@ -35,17 +35,16 @@ Each location features curated travel details, images, and package highlights.
    3. Comfortable Stay accommodations
 
 ✍ Share Your Experience (Blog)
-Post your travel experiences via blog entries.
+   Post your travel experiences via blog entries.
 
-Interact with other travelers’ stories and tips.
+   Interact with other travelers’ stories and tips.
 
 💖 Wishlist
-Save your dream destinations in a personal wishlist.
-
-Easily revisit and plan trips later.
+    Save your dream destinations in a personal wishlist.
+    Easily revisit and plan trips later.
 
 🔮 Future Plans
-Expand the list of destinations beyond the current 8 locations.
+   Expand the list of destinations beyond the current 8 locations.
 
-Add photo upload support to blogs so users can share their adventures visually.
+   Add photo upload support to blogs so users can share their adventures visually.
 
