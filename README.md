@@ -3,7 +3,7 @@ FirstTrip 🌏✨ LIVE at https://dairytravel.netlify.app/
 A Northeast Tourism Platform
 
 
-![Uploading Screenshot 2025-08-08 204038.png…]()
+<img width="1887" height="859" alt="Screenshot 2025-08-08 204038" src="https://github.com/user-attachments/assets/64a6e9e1-c78e-40f4-92fb-d14cf652ecbd" />
 
 
 
