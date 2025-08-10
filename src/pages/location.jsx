@@ -8,6 +8,7 @@ const Location = () => {
   const [hotels, setHotels] = useState([]);
   const [activeTab, setActiveTab] = useState("pois");
   const [error, setError] = useState("");
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
   const handleSearch = async () => {
     if (!region.trim()) {
@@ -20,10 +21,10 @@ const Location = () => {
     setHotels([]);
 
     try {
-      const poiRes = await axios.get(`/api/destination/popular?region=${region}`);
+      const poiRes = await axios.get(`${API_BASE}/api/destination/popular?region=${region}`);
       setPois(poiRes.data.pois || []);
 
-      const hotelRes = await axios.get(`/api/destination/hotels?region=${region}`);
+      const hotelRes = await axios.get(`${API_BASE}/api/destination/hotels?region=${region}`);
       setHotels(hotelRes.data.hotels || []);
     } catch (err) {
       console.error(err);
