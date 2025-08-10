@@ -57,9 +57,11 @@ const Location = () => {
   };
 
   // ✅ Navigate to booking form with destination
-  const handleImageClick = (name) => {
-    navigate(`/package-form?package=${encodeURIComponent(name)}`);
-  };
+  // ✅ Navigate to register-package with destination
+const handleImageClick = (name) => {
+  navigate(`/register-package?package=${encodeURIComponent(name)}`);
+};
+
 
   return (
     <div style={styles.container}>
