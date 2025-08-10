@@ -1,6 +1,5 @@
 from flask import Blueprint, request, jsonify
 import requests
-import os
 from config import Config
 
 # Get the OpenTripMap API key from config
@@ -56,6 +55,7 @@ def get_popular_destinations():
         details = detail_resp.json()
         image_url = details.get("preview", {}).get("source")
 
+        # Add only name & image (no description)
         results.append({
             "name": details.get("name"),
             "image": image_url
@@ -102,6 +102,7 @@ def get_hotels():
             hotel_details = hotel_detail_resp.json()
             image_url = hotel_details.get("preview", {}).get("source") or "https://via.placeholder.com/300x200?text=No+Image"
 
+            # Add only name, image & address (no description or rating)
             hotels.append({
                 "name": hotel_details.get("name"),
                 "image": image_url,
