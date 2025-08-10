@@ -1,20 +1,19 @@
-// src/pages/Location.jsx
 import React, { useState } from "react";
 import axios from "axios";
-import locations from "../data/locations"; // ✅ Import static locations list
+import locations from "../data/locations"; 
 
 function Location() {
   const [region, setRegion] = useState("");
   const [pois, setPois] = useState([]);
   const [hotels, setHotels] = useState([]);
   const [loading, setLoading] = useState(false);
-
+const API_BASE = import.meta.env.VITE_API_BASE_URL; 
   const handleSearch = async () => {
     if (!region) return;
     setLoading(true);
     try {
-      const poiRes = await axios.get(`/api/destination/popular?region=${region}`);
-      const hotelRes = await axios.get(`/api/destination/hotels?region=${region}`);
+      const poiRes = await axios.get(`${API_BASE}/api/destination/popular?region=${region}`);
+      const hotelRes = await axios.get(`${API_BASE}/api/destination/hotels?region=${region}`);
 
       console.log("POIs Response:", poiRes.data);
       console.log("Hotels Response:", hotelRes.data);
