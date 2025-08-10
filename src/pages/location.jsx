@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom"; // ✅ Import navigate
 
 // Sample fallback images (replace with your own good-looking photos)
 const fallbackImages = [
@@ -18,6 +19,7 @@ const Location = () => {
   const [activeTab, setActiveTab] = useState("pois");
   const [error, setError] = useState("");
 
+  const navigate = useNavigate(); // ✅ Hook for navigation
   const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
   const handleSearch = async () => {
@@ -52,6 +54,11 @@ const Location = () => {
       item.imgUrl ||
       fallbackImages[index % fallbackImages.length]
     );
+  };
+
+  // ✅ Navigate to booking form with destination
+  const handleImageClick = (name) => {
+    navigate(`/package-form?package=${encodeURIComponent(name)}`);
   };
 
   return (
@@ -96,18 +103,28 @@ const Location = () => {
         {activeTab === "pois" &&
           pois.map((item, i) => (
             <div key={i} style={styles.card}>
-              <img src={getImage(item, i)} alt={item.name} style={styles.image} />
+              <img
+                src={getImage(item, i)}
+                alt={item.name}
+                style={{ ...styles.image, cursor: "pointer" }}
+                onClick={() => handleImageClick(item.name)} // ✅ Click to navigate
+              />
               <h3>{item.name}</h3>
-              <p>{item.description || "No description available"}</p>
+              <p>{item.description || ""}</p>
             </div>
           ))}
 
         {activeTab === "hotels" &&
           hotels.map((item, i) => (
             <div key={i} style={styles.card}>
-              <img src={getImage(item, i)} alt={item.name} style={styles.image} />
+              <img
+                src={getImage(item, i)}
+                alt={item.name}
+                style={{ ...styles.image, cursor: "pointer" }}
+                onClick={() => handleImageClick(item.name)} // ✅ Click to navigate
+              />
               <h3>{item.name}</h3>
-              <p>{item.description || "No description available"}</p>
+              <p>{item.description || ""}</p>
             </div>
           ))}
       </div>
