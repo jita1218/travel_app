@@ -1,6 +1,14 @@
 import React, { useState } from "react";
 import axios from "axios";
-import locations from "../data/locations"; // predefined list
+
+// Sample fallback images (replace with your own good-looking photos)
+const fallbackImages = [
+  "https://images.unsplash.com/photo-1507525428034-b723cf961d3e", // Beach
+  "https://images.unsplash.com/photo-1506744038136-46273834b3fb", // Mountain
+  "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee", // City
+  "https://images.unsplash.com/photo-1519821172141-b5d8e87a1284", // Lake
+  "https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1", // Desert
+];
 
 const Location = () => {
   const [region, setRegion] = useState("");
@@ -10,12 +18,11 @@ const Location = () => {
   const [activeTab, setActiveTab] = useState("pois");
   const [error, setError] = useState("");
 
-  // ✅ Environment-based backend URL
-  const API_BASE = import.meta.env.VITE_API_BASE_URL; // e.g. https://flaskapi.onrender.com
+  const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
   const handleSearch = async () => {
     if (!region.trim()) {
-      setError("Please select or enter a region");
+      setError("Please enter a location name");
       return;
     }
     setError("");
@@ -24,12 +31,10 @@ const Location = () => {
     setHotels([]);
 
     try {
-      // Fetch POIs
       const poiRes = await axios.get(`${API_BASE}/api/destination/popular?region=${region}`);
-      setPois(poiRes.data.pois || []);
-
-      // Fetch Hotels
       const hotelRes = await axios.get(`${API_BASE}/api/destination/hotels?region=${region}`);
+
+      setPois(poiRes.data.pois || []);
       setHotels(hotelRes.data.hotels || []);
     } catch (err) {
       console.error(err);
@@ -39,13 +44,13 @@ const Location = () => {
     }
   };
 
-  const getImage = (item) => {
+  const getImage = (item, index) => {
     return (
       item.image ||
       item.photo ||
       item.image_url ||
       item.imgUrl ||
-      "https://via.placeholder.com/300x200?text=No+Image"
+      fallbackImages[index % fallbackImages.length]
     );
   };
 
@@ -53,29 +58,14 @@ const Location = () => {
     <div style={styles.container}>
       <h1 style={styles.title}>Search Destinations</h1>
 
-      {/* Dropdown + Input + Button */}
       <div style={styles.searchBox}>
-        <select
-          value={region}
-          onChange={(e) => setRegion(e.target.value)}
-          style={styles.select}
-        >
-          <option value="">Select a location</option>
-          {locations.map((loc, index) => (
-            <option key={index} value={loc.region}>
-              {loc.name}
-            </option>
-          ))}
-        </select>
-
         <input
           type="text"
-          placeholder="Or enter region name..."
+          placeholder="Type any location..."
           value={region}
           onChange={(e) => setRegion(e.target.value)}
           style={styles.input}
         />
-
         <button onClick={handleSearch} style={styles.button}>
           Search
         </button>
@@ -104,22 +94,20 @@ const Location = () => {
       {/* Cards */}
       <div style={styles.cardContainer}>
         {activeTab === "pois" &&
-          pois.map((item, index) => (
-            <div key={index} style={styles.card}>
-              <img src={getImage(item)} alt={item.name} style={styles.image} />
+          pois.map((item, i) => (
+            <div key={i} style={styles.card}>
+              <img src={getImage(item, i)} alt={item.name} style={styles.image} />
               <h3>{item.name}</h3>
               <p>{item.description || "No description available"}</p>
             </div>
           ))}
 
         {activeTab === "hotels" &&
-          hotels.map((item, index) => (
-            <div key={index} style={styles.card}>
-              <img src={getImage(item)} alt={item.name} style={styles.image} />
+          hotels.map((item, i) => (
+            <div key={i} style={styles.card}>
+              <img src={getImage(item, i)} alt={item.name} style={styles.image} />
               <h3>{item.name}</h3>
               <p>{item.description || "No description available"}</p>
-              <p><strong>Address:</strong> {item.address || "Not available"}</p>
-              <p><strong>Rating:</strong> {item.rating}</p>
             </div>
           ))}
       </div>
@@ -132,8 +120,7 @@ const styles = {
   container: { padding: "20px", fontFamily: "Arial, sans-serif" },
   title: { textAlign: "center", marginBottom: "20px" },
   searchBox: { display: "flex", justifyContent: "center", gap: "10px", marginBottom: "20px" },
-  select: { padding: "10px", fontSize: "16px", border: "1px solid #ccc", borderRadius: "4px" },
-  input: { padding: "10px", fontSize: "16px", border: "1px solid #ccc", borderRadius: "4px", width: "200px" },
+  input: { padding: "10px", fontSize: "16px", border: "1px solid #ccc", borderRadius: "4px", width: "250px" },
   button: { padding: "10px 15px", fontSize: "16px", backgroundColor: "#007bff", color: "#fff", border: "none", borderRadius: "4px", cursor: "pointer" },
   error: { color: "red", textAlign: "center" },
   tabs: { display: "flex", justifyContent: "center", marginBottom: "20px" },
