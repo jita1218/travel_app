@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-const DestinationSearch = () => {
+const Location = () => {
   const [region, setRegion] = useState("");
   const [loading, setLoading] = useState(false);
   const [pois, setPois] = useState([]);
@@ -20,11 +20,9 @@ const DestinationSearch = () => {
     setHotels([]);
 
     try {
-      // Fetch POIs
       const poiRes = await axios.get(`/api/destination/popular?region=${region}`);
       setPois(poiRes.data.pois || []);
 
-      // Fetch Hotels
       const hotelRes = await axios.get(`/api/destination/hotels?region=${region}`);
       setHotels(hotelRes.data.hotels || []);
     } catch (err) {
@@ -37,7 +35,8 @@ const DestinationSearch = () => {
 
   return (
     <div style={styles.container}>
-      <h1 style={styles.title}>Explore Destinations</h1>
+      <h1 style={styles.title}>Search Destinations</h1>
+
       <div style={styles.searchBox}>
         <input
           type="text"
@@ -50,9 +49,10 @@ const DestinationSearch = () => {
           Search
         </button>
       </div>
+
       {error && <p style={styles.error}>{error}</p>}
 
-      {/* Tab Buttons */}
+      {/* Tabs */}
       <div style={styles.tabs}>
         <button
           style={activeTab === "pois" ? styles.activeTab : styles.tab}
@@ -68,10 +68,10 @@ const DestinationSearch = () => {
         </button>
       </div>
 
-      {/* Loading State */}
+      {/* Loading */}
       {loading && <p>Loading...</p>}
 
-      {/* Results */}
+      {/* Cards */}
       <div style={styles.cardContainer}>
         {activeTab === "pois" &&
           pois.map((item, index) => (
@@ -105,20 +105,20 @@ const DestinationSearch = () => {
   );
 };
 
-// Inline styles for simplicity
+// Styles
 const styles = {
-  container: { padding: "20px", fontFamily: "Arial, sans-serif", maxWidth: "900px", margin: "auto" },
+  container: { padding: "20px", fontFamily: "Arial, sans-serif" },
   title: { textAlign: "center", marginBottom: "20px" },
   searchBox: { display: "flex", justifyContent: "center", marginBottom: "20px" },
   input: { padding: "10px", width: "60%", fontSize: "16px", border: "1px solid #ccc", borderRadius: "4px" },
-  button: { padding: "10px 15px", marginLeft: "10px", fontSize: "16px", cursor: "pointer", backgroundColor: "#007bff", color: "#fff", border: "none", borderRadius: "4px" },
+  button: { padding: "10px 15px", marginLeft: "10px", fontSize: "16px", backgroundColor: "#007bff", color: "#fff", border: "none", borderRadius: "4px", cursor: "pointer" },
   error: { color: "red", textAlign: "center" },
   tabs: { display: "flex", justifyContent: "center", marginBottom: "20px" },
-  tab: { padding: "10px 20px", border: "1px solid #ccc", cursor: "pointer", backgroundColor: "#f0f0f0" },
+  tab: { padding: "10px 20px", border: "1px solid #ccc", backgroundColor: "#f0f0f0", cursor: "pointer" },
   activeTab: { padding: "10px 20px", border: "1px solid #ccc", backgroundColor: "#007bff", color: "#fff" },
   cardContainer: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "20px" },
   card: { border: "1px solid #ddd", padding: "10px", borderRadius: "8px", backgroundColor: "#fff" },
   image: { width: "100%", height: "200px", objectFit: "cover", borderRadius: "8px" },
 };
 
-export default DestinationSearch;
+export default Location;
