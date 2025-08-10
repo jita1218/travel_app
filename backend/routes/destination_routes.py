@@ -22,7 +22,7 @@ def get_popular_destinations():
     if not region:
         return jsonify({"error": "Region is required"}), 400
 
-    # Get latitude and longitude for the region using OpenTripMap geoname API
+    # Get latitude and longitude for the region
     geo_url = f"https://api.opentripmap.com/0.1/en/places/geoname?name={region}&apikey={opentrip_api_key}"
     geo_resp = requests.get(geo_url)
     if geo_resp.status_code != 200:
@@ -33,7 +33,7 @@ def get_popular_destinations():
     if not lat or not lon:
         return jsonify({"error": "Invalid location data received"}), 400
 
-    # Fetch popular POIs within a 40km radius
+    # Fetch popular POIs
     poi_url = f"https://api.opentripmap.com/0.1/en/places/radius?radius=40000&lon={lon}&lat={lat}&rate=2&format=json&limit=30&apikey={opentrip_api_key}"
     poi_resp = requests.get(poi_url)
     if poi_resp.status_code != 200:
@@ -42,7 +42,7 @@ def get_popular_destinations():
     pois = poi_resp.json()
     results = []
 
-    # For each POI, fetch detailed information
+    # Fetch POI details
     for poi in pois:
         xid = poi.get("xid")
         if not xid:
@@ -56,11 +56,9 @@ def get_popular_destinations():
         details = detail_resp.json()
         image_url = details.get("preview", {}).get("source")
 
-        # Append relevant POI details to results
         results.append({
             "name": details.get("name"),
-            "image": image_url,
-            "description": details.get("wikipedia_extracts", {}).get("text"),
+            "image": image_url
         })
 
     return jsonify({"pois": results})
@@ -74,7 +72,7 @@ def get_hotels():
     if not region:
         return jsonify({"error": "Region is required"}), 400
 
-    # Get latitude and longitude for the region using OpenTripMap geoname API
+    # Get latitude and longitude for the region
     geo_url = f"https://api.opentripmap.com/0.1/en/places/geoname?name={region}&apikey={opentrip_api_key}"
     geo_resp = requests.get(geo_url)
     if geo_resp.status_code != 200:
@@ -85,13 +83,12 @@ def get_hotels():
     if not lat or not lon:
         return jsonify({"error": "Invalid location data received"}), 400
 
-    # Fetch accommodations within a 10km radius
+    # Fetch accommodations
     hotel_url = f"https://api.opentripmap.com/0.1/en/places/radius?radius=10000&lon={lon}&lat={lat}&kinds=accomodations&format=json&limit=10&apikey={opentrip_api_key}"
     hotel_resp = requests.get(hotel_url)
     hotels = []
     if hotel_resp.status_code == 200:
         hotel_data = hotel_resp.json()
-        # For each hotel, fetch detailed information
         for hotel in hotel_data:
             xid = hotel.get("xid")
             if not xid:
@@ -103,16 +100,12 @@ def get_hotels():
                 continue
 
             hotel_details = hotel_detail_resp.json()
-            # Use a placeholder image if none is available
             image_url = hotel_details.get("preview", {}).get("source") or "https://via.placeholder.com/300x200?text=No+Image"
 
-            # Append relevant hotel details to hotels list
             hotels.append({
                 "name": hotel_details.get("name"),
-                "description": hotel_details.get("wikipedia_extracts", {}).get("text"),
                 "image": image_url,
-                "address": hotel_details.get("address", {}).get("formatted"),
-                "rating": hotel_details.get("rate", "N/A"),
+                "address": hotel_details.get("address", {}).get("formatted")
             })
 
     return jsonify({"hotels": hotels})
