@@ -12,6 +12,7 @@ import PackageForm from './pages/PackageForm';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Logout from './pages/logout';
+import Location from './pages/location';
 import WishlistPage from './pages/WishlistPage';
 import MyBookingsPage from './pages/MyBookingsPage'; 
 
@@ -24,6 +25,7 @@ function App() {
           <Routes>
             <Route path="/" element={<FullPageWrapper><HomePage /></FullPageWrapper>} />
             <Route path="/about" element={<FullPageWrapper><AboutPage /></FullPageWrapper>} />
+            <Route path="/location" element={<FullPageWrapper><Location /></FullPageWrapper>} />
             <Route path="/blog" element={<FullPageWrapper><BlogPage /></FullPageWrapper>} />
             <Route path="/blogform" element={<FullPageWrapper><BlogForm /></FullPageWrapper>} />
             <Route path="/register-package" element={<FullPageWrapper><PackageForm /></FullPageWrapper>} />
