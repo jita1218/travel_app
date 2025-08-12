@@ -183,6 +183,9 @@ const inputStyle = {
   border: '1px solid #ccc',
   fontSize: '1rem',
   width: '100%',
+  marginBottom: '1rem',
+  boxSizing: 'border-box',
 };
+
 
 export default PackageForm;
