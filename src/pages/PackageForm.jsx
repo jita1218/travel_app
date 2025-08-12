@@ -123,7 +123,7 @@ const PackageForm = () => {
           minDate={new Date()}
           required
           className="custom-datepicker"
-          style={inputStyle}
+          style={inputStyle}//style added
         />
 
         <input
