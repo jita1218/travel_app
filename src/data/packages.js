@@ -16,7 +16,7 @@ const packages = [
     image: shillongImg,
   },
   {
-    name: 'Kaziranga Wildlife Tour',
+    name: 'Kaziranga National Park Safari',
     features: [
       '4 Nights in Kaziranga',
       'Stay in Eco-Resorts near National Park',
@@ -38,7 +38,7 @@ const packages = [
     image: tawangImg,
   },
   {
-    name: 'Northeast Explorer',
+    name: 'Meghalaya Explore',
     features: [
       '10 Nights across Meghalaya, Assam & Arunachal',
       'Stay in Premium Hotels + Tribal Homestays',
