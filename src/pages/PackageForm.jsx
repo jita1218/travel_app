@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -7,6 +7,7 @@ const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 const PackageForm = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const params = new URLSearchParams(location.search);
   const destination = params.get('package');
 
@@ -22,10 +23,13 @@ const PackageForm = () => {
 
   useEffect(() => {
     const savedUsername = localStorage.getItem('username');
-    if (savedUsername) {
-      setFormData((prev) => ({ ...prev, username: savedUsername }));
+    if (!savedUsername) {
+      // 🚫 User is not logged in → Redirect to login page
+      navigate('/login');
+      return;
     }
-  }, []);
+    setFormData((prev) => ({ ...prev, username: savedUsername }));
+  }, [navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -69,7 +73,9 @@ const PackageForm = () => {
 
       setSuccessMsg(`Trip to ${destination} booked successfully!`);
       setError('');
-      setFormData({ ...formData, travel_date: null, num_people: '' });
+
+      // ✅ Redirect to My Bookings after successful booking
+      navigate('/mybookings');
     } catch (err) {
       setError(err.message);
       setSuccessMsg('');
