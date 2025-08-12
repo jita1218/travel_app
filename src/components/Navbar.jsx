@@ -46,7 +46,7 @@ function Navbar() {
                 }}
             >
                 <li><StyledLink to="/" onClick={closeMenu}>Home</StyledLink></li>
-                <li><StyledLink to="/?scroll=locations" onClick={closeMenu}>Locations</StyledLink></li>
+                <li><StyledLink to="/location" onClick={closeMenu}>Locations</StyledLink></li>
                 <li><StyledLink to="/?scroll=packages" onClick={closeMenu}>Packages</StyledLink></li>
                 <li><StyledLink to="/blog" onClick={closeMenu}>Blog</StyledLink></li>
                 <li><StyledLink to="/about" onClick={closeMenu}>About Us</StyledLink></li>

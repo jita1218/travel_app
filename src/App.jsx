@@ -15,6 +15,8 @@ import Logout from './pages/logout';
 import Location from './pages/location';
 import WishlistPage from './pages/WishlistPage';
 import MyBookingsPage from './pages/MyBookingsPage'; 
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
+import TermsOfServicePage from './pages/TermsOfServicePage';
 
 function App() {
   return (
@@ -33,7 +35,9 @@ function App() {
             <Route path="/signup" element={<FullPageWrapper><Signup /></FullPageWrapper>} />
             <Route path="/logout" element={<FullPageWrapper><Logout /></FullPageWrapper>} />
             <Route path="/wishlist" element={<FullPageWrapper><WishlistPage /></FullPageWrapper>} />
-            <Route path="/my-bookings" element={<FullPageWrapper><MyBookingsPage /></FullPageWrapper>} /> {/* ✅ NEW */}
+            <Route path="/my-bookings" element={<FullPageWrapper><MyBookingsPage /></FullPageWrapper>} />
+            <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+            <Route path="/terms-of-service" element={<TermsOfServicePage />} />
           </Routes>
         </div>
         <Footer />

@@ -15,16 +15,17 @@ const Footer = () => {
         flexWrap: 'wrap',
         maxWidth: '1200px',
         margin: '0 auto',
+        gap:'10rem',
     };
 
     const columnStyle = {
         flex: '1 1 200px',
-        marginBottom: '2rem',
+        marginBottom: '1rem',
     };
 
     const headingStyle = {
-        fontSize: '20px',
-        fontWeight: '600',
+        fontSize: '22px',
+        fontWeight: '700',
         marginBottom: '1rem',
         display: 'inline-block',
         paddingBottom: '5px',
@@ -67,11 +68,21 @@ const Footer = () => {
     return (
         <footer style={footerStyle}>
             <div style={containerStyle}>
+                {/* About Column */}
+                <div style={columnStyle}>
+                    <h4 style={headingStyle}>FirstFlight</h4>
+                    <p style={{ fontSize: '0.95rem', lineHeight: '1.5' }}>
+                        FirstFlight is your trusted travel companion, helping you explore destinations with ease.
+                        We aim to make your trips memorable and hassle-free.
+                    </p>
+                </div>
+
                 {/* Quick Links */}
                 <div style={columnStyle}>
                     <h4 style={headingStyle}>Quick Links</h4>
-                    <a href="/register" style={linkStyle}>Register</a>
                     <a href="/about" style={linkStyle}>About Us</a>
+                    <a href="/privacy-policy" style={linkStyle}>Privacy Policy</a>
+                    <a href="/terms-of-service" style={linkStyle}>Terms of Service</a>
                 </div>
 
                 {/* Connect */}
