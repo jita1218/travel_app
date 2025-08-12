@@ -28,7 +28,7 @@ const TermsOfServicePage = () => {
                     Terms of Service
                 </h1>
                 <p style={{ fontSize: '1.1rem', color: '#333', lineHeight: '1.8', maxWidth: '900px' }}>
-                    Welcome to FirstFlight! By using our website and services, you agree to comply with and be bound
+                    Welcome to FirstTrip! By using our website and services, you agree to comply with and be bound
                     by the following terms and conditions.
                     <br /><br />
                     You agree to use our platform responsibly, only for lawful purposes, and in a way that does not infringe

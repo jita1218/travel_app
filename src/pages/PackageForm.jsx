@@ -75,7 +75,7 @@ const PackageForm = () => {
       setError('');
 
       // ✅ Redirect to My Bookings after successful booking
-      navigate('/mybookings');
+      navigate('/my-bookings');
     } catch (err) {
       setError(err.message);
       setSuccessMsg('');

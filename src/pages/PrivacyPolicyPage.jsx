@@ -28,7 +28,7 @@ const PrivacyPolicyPage = () => {
                     Privacy Policy
                 </h1>
                 <p style={{ fontSize: '1.1rem', color: '#333', lineHeight: '1.8', maxWidth: '900px' }}>
-                    At FirstFlight, we take your privacy seriously. This Privacy Policy explains how we collect, use,
+                    At FirstTrip, we take your privacy seriously. This Privacy Policy explains how we collect, use,
                     and protect your personal information when you use our website and services.
                     <br /><br />
                     We may collect information you provide directly to us, such as when you create an account,

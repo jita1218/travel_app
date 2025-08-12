@@ -70,9 +70,9 @@ const Footer = () => {
             <div style={containerStyle}>
                 {/* About Column */}
                 <div style={columnStyle}>
-                    <h4 style={headingStyle}>FirstFlight</h4>
+                    <h4 style={headingStyle}>FirstTrip</h4>
                     <p style={{ fontSize: '0.95rem', lineHeight: '1.5' }}>
-                        FirstFlight is your trusted travel companion, helping you explore destinations with ease.
+                        FirstTrip is your trusted travel companion, helping you explore destinations with ease.
                         We aim to make your trips memorable and hassle-free.
                     </p>
                 </div>
